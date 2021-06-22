@@ -14,5 +14,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A `Store\StoreManager` implementation with bootstrap methods for functionalities that require resolving current store
 
 
-
 [Unreleased]: https://github.com/EcomDev/magento2-test-essentials/compare/1f1b2e7d02eb8d396662b71b61c7120470800713...main
