@@ -16,8 +16,6 @@ jobs:
           tools: composer:v2
       - run: composer install
         shell: bash
-        env:
-          COMPOSER_AUTH: ${{secrets.COMPOSER_AUTH}}
       - run: composer format:check
         shell: bash
   tests:
