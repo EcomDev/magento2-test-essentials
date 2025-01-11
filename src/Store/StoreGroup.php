@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright © EcomDev B.V. All rights reserved.
  * See LICENSE for license details.
@@ -6,24 +7,23 @@
 
 declare(strict_types=1);
 
-
 namespace EcomDev\Magento2TestEssentials\Store;
 
 use Magento\Store\Api\Data\GroupInterface;
 use Magento\Store\Api\Data\GroupExtensionInterface;
 
 /**
- * Implementation of store group that imitates real store group behaviour
+ * Implementation that imitates real store group model behaviour
  */
 class StoreGroup implements GroupInterface
 {
-    private $id;
-    private $code;
-    private $name;
-    private $websiteId = 0;
-    private $rootCategoryId = 2;
-    private $defaultStoreId = 0;
-    private $extensionAttributes;
+    private int $id;
+    private string $code;
+    private string $name;
+    private int $websiteId = 0;
+    private int $rootCategoryId = 2;
+    private int $defaultStoreId = 0;
+    private ?GroupExtensionInterface $extensionAttributes = null;
 
     private function __construct(int $id, string $code)
     {
@@ -40,92 +40,78 @@ class StoreGroup implements GroupInterface
         return new self($id, $code);
     }
 
-    /* @inerhitDoc */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /* @inerhitDoc */
-    public function setId($id)
+    public function setId($id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    /* @inerhitDoc */
-    public function getWebsiteId()
+    public function getWebsiteId(): int
     {
         return $this->websiteId;
     }
 
-    /* @inerhitDoc */
-    public function setWebsiteId($websiteId)
+    public function setWebsiteId($websiteId): self
     {
         $this->websiteId = $websiteId;
         return $this;
     }
 
-    /* @inerhitDoc */
-    public function getRootCategoryId()
+    public function getRootCategoryId(): int
     {
         return $this->rootCategoryId;
     }
 
-    /* @inerhitDoc */
-    public function setRootCategoryId($rootCategoryId)
+    public function setRootCategoryId($rootCategoryId): self
     {
         $this->rootCategoryId = $rootCategoryId;
         return $this;
     }
 
-    /* @inerhitDoc */
     public function getDefaultStoreId()
     {
         return $this->defaultStoreId;
     }
 
-    /* @inerhitDoc */
     public function setDefaultStoreId($defaultStoreId)
     {
         $this->defaultStoreId = $defaultStoreId;
         return $this;
     }
 
-    /* @inerhitDoc */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /* @inerhitDoc */
-    public function setName($name)
+    public function setName($name): self
     {
         $this->name = $name;
         return $this;
     }
 
-    /* @inerhitDoc */
-    public function getCode()
+    public function getCode(): string
     {
         return $this->code;
     }
 
-    /* @inerhitDoc */
-    public function setCode($code)
+    public function setCode($code): self
     {
         $this->code = $code;
         return $this;
     }
 
-    /* @inerhitDoc */
-    public function getExtensionAttributes()
+    public function getExtensionAttributes(): ?GroupExtensionInterface
     {
         return $this->extensionAttributes;
     }
 
-    /* @inerhitDoc */
-    public function setExtensionAttributes(GroupExtensionInterface $extensionAttributes)
+    public function setExtensionAttributes(GroupExtensionInterface $extensionAttributes): self
     {
         $this->extensionAttributes = $extensionAttributes;
         return $this;

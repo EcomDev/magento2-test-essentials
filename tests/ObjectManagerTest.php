@@ -1,8 +1,10 @@
 <?php
+
 /**
  * Copyright © EcomDev B.V. All rights reserved.
  * See LICENSE for license details.
  */
+
 declare(strict_types=1);
 
 namespace EcomDev\Magento2TestEssentials;
@@ -12,11 +14,12 @@ use LogicException;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\DataObject;
 use Magento\Framework\ObjectManagerInterface;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class ObjectManagerTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function returnsSelfWhenObjectManagerInterfaceRequested()
     {
         $objectManager = ObjectManager::new();
@@ -24,7 +27,7 @@ class ObjectManagerTest extends TestCase
         $this->assertSame($objectManager, $objectManager->get(ObjectManagerInterface::class));
     }
 
-    /** @test */
+    #[Test]
     public function instantiatesComplexObjectFromCoreWithoutInvokingConstructor()
     {
         $objectManager = ObjectManager::new();
@@ -32,7 +35,7 @@ class ObjectManagerTest extends TestCase
         $this->assertInstanceOf(Product::class, $objectManager->get(Product::class));
     }
 
-    /** @test */
+    #[Test]
     public function createsDependenciesFromArguments()
     {
         $objectManager = ObjectManager::new();
@@ -43,7 +46,7 @@ class ObjectManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function createsDependencyWithComplexArgumentsAutomaticallyResolved()
     {
         $objectManager = ObjectManager::new();
@@ -54,14 +57,14 @@ class ObjectManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function createsObjectWithoutConstructor()
     {
         $objectManger = ObjectManager::new();
         $this->assertEquals(new DependencyOne(), $objectManger->create(DependencyOne::class));
     }
 
-    /** @test */
+    #[Test]
     public function createsInstanceOnlyOnceOnGet()
     {
         $objectManager = ObjectManager::new();
@@ -72,7 +75,7 @@ class ObjectManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function createsNewInstanceEachTimeOnCreate()
     {
         $objectManager = ObjectManager::new();
@@ -83,15 +86,15 @@ class ObjectManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function errorsOnConfigurationArrayChange()
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('FakeObjectManager does not support native configure');
+        $this->expectExceptionMessage('Fake ObjectManager does not support native configure');
         ObjectManager::new()->configure([]);
     }
 
-    /** @test */
+    #[Test]
     public function usesProvidedInstanceWhenGettingType()
     {
         $instance = new DependencyOne();
@@ -102,7 +105,7 @@ class ObjectManagerTest extends TestCase
         $this->assertEquals($instance, $objectManager->get(DependencyOne::class));
     }
 
-    /** @test */
+    #[Test]
     public function usesProvidedInstanceWhenCreatingTypeWithItAsDependency()
     {
         $instanceOne = new DependencyOne();
@@ -118,7 +121,7 @@ class ObjectManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function usesCustomFactoryForObjectCreation()
     {
         $objectManager = ObjectManager::new()
@@ -145,7 +148,7 @@ class ObjectManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function usesCustomFactoryForSharedObjectCreation()
     {
         $objectManager = ObjectManager::new()
@@ -166,7 +169,7 @@ class ObjectManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function creationOfObjectWithScalarArgumentFailsWhenNoValueProvided()
     {
         $this->expectException(InvalidArgumentException::class);

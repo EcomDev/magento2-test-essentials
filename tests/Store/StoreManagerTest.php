@@ -1,18 +1,21 @@
 <?php
+
 /**
  * Copyright © EcomDev B.V. All rights reserved.
  * See LICENSE for license details.
  */
+
 declare(strict_types=1);
 
 namespace EcomDev\Magento2TestEssentials\Store;
 
 use Magento\Framework\Exception\NoSuchEntityException;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class StoreManagerTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function containsAdminWebsiteByDefault()
     {
         $this->assertEquals(
@@ -23,7 +26,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function returnsAddedWebsitesGroupedById()
     {
         $this->assertEquals(
@@ -40,7 +43,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function returnsAddedWebsitesGroupedByCode()
     {
         $this->assertEquals(
@@ -58,7 +61,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function returnsWebsiteById()
     {
         $this->assertEquals(
@@ -71,7 +74,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function returnsWebsiteByCode()
     {
         $this->assertEquals(
@@ -84,7 +87,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function returnsDefaultWebsiteWithTrueAsAnArgument()
     {
         $this->assertEquals(
@@ -98,7 +101,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function containsAdminStoreByDefault()
     {
         $this->assertEquals(
@@ -110,7 +113,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function returnsStoresByIds()
     {
         $this->assertEquals(
@@ -127,7 +130,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function returnsStoresByCode()
     {
         $this->assertEquals(
@@ -145,7 +148,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function returnsStoreById()
     {
         $this->assertEquals(
@@ -158,7 +161,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function returnsStoreByCode()
     {
         $this->assertEquals(
@@ -171,7 +174,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function returnsCurrentlySetStoreView()
     {
         $this->assertEquals(
@@ -185,7 +188,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function currentStoreViewAffectsCurrentWebsite()
     {
         $this->assertEquals(
@@ -200,7 +203,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function currentStoreViewCanBeSetFromStoreCode()
     {
         $this->assertEquals(
@@ -214,7 +217,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function errorsOutWhenStoreDoesNotExistsById()
     {
         $this->expectException(NoSuchEntityException::class);
@@ -224,7 +227,7 @@ class StoreManagerTest extends TestCase
             ->getStore(13);
     }
 
-    /** @test */
+    #[Test]
     public function errorsOutWhenStoreDoesNotExistsByCode()
     {
         $this->expectException(NoSuchEntityException::class);
@@ -234,7 +237,7 @@ class StoreManagerTest extends TestCase
             ->getStore("three");
     }
 
-    /** @test */
+    #[Test]
     public function returnsDefaultStoreViewFromDefaultWebsite()
     {
         $storeManager = StoreManager::new()
@@ -250,7 +253,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function errorsOutWhenStoreCannotBeFoundFromDefaultWebsite()
     {
         $this->expectException(NoSuchEntityException::class);
@@ -265,7 +268,7 @@ class StoreManagerTest extends TestCase
             ->getStore(true);
     }
 
-    /** @test */
+    #[Test]
     public function errorsOutCurrentStoreCannotBeFound()
     {
         $this->expectException(NoSuchEntityException::class);
@@ -278,7 +281,7 @@ class StoreManagerTest extends TestCase
             ->getStore();
     }
 
-    /** @test */
+    #[Test]
     public function containsAdminStoreGroupByDefault()
     {
         $this->assertEquals(
@@ -290,7 +293,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function returnsStoreGroupsById()
     {
         $this->assertEquals(
@@ -307,7 +310,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function returnsSingleStoreGroupById()
     {
         $this->assertEquals(
@@ -320,7 +323,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function defaultsToAdminStore()
     {
         $defaultStore = StoreManager::new()
@@ -335,7 +338,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function usesStoreFromDefaultWebsite()
     {
         $defaultStore = StoreManager::new()
@@ -352,7 +355,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function usesGroupFromCurrentStoreWhenAccessedWithoutArguments()
     {
         $storeManager = StoreManager::new()
@@ -371,7 +374,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function usesGroupFromDefaultWebsiteWithTrueArgument()
     {
         $storeManager = StoreManager::new()
@@ -389,7 +392,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function websiteErrorsOutWhenDefaultWebsiteDoesNotExists()
     {
         $this->expectException(NoSuchEntityException::class);
@@ -402,7 +405,7 @@ class StoreManagerTest extends TestCase
         $storeManager->getWebsite(true);
     }
 
-    /** @test */
+    #[Test]
     public function storeGroupErrorsOutWhenDefaultWebsiteDoesNotExists()
     {
         $this->expectException(NoSuchEntityException::class);
@@ -417,7 +420,7 @@ class StoreManagerTest extends TestCase
         $storeManager->getGroup(true);
     }
 
-    /** @test */
+    #[Test]
     public function storeGroupErrorsOutWhenDefaultGroupDoesNotExists()
     {
         $this->expectException(NoSuchEntityException::class);
@@ -433,7 +436,7 @@ class StoreManagerTest extends TestCase
         $storeManager->getGroup(true);
     }
 
-    /** @test */
+    #[Test]
     public function resetsCurrentStoreViewOnReInitStoresCall()
     {
         $storeManager = StoreManager::new()
@@ -449,7 +452,7 @@ class StoreManagerTest extends TestCase
         $this->assertEquals($storeManager, $storeManagerWithCurrentStore);
     }
 
-    /** @test */
+    #[Test]
     public function notTheSingleStoreModeWhenEnoughStoresAreAvailable()
     {
         $storesManager = StoreManager::new()
@@ -462,7 +465,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function reportsSingleStoreModeWhenOneStoreIsAvailable()
     {
         $storesManager = StoreManager::new()
@@ -474,7 +477,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function returnsSingleStoreAsCurrentWhenSingleStore()
     {
         $storesManager = StoreManager::new()
@@ -487,7 +490,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function reportsHasSingleStoreWhenOneIsAvailable()
     {
         $storesManager = StoreManager::new()
@@ -499,7 +502,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function reportsDoesNotHaveSingleStoreWhenMoreThenOneIsAvailable()
     {
         $storesManager = StoreManager::new()
@@ -512,7 +515,7 @@ class StoreManagerTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function disablesSingleStoreModeCheckAndAlwaysReturnsTrue()
     {
         $storesManager = StoreManager::new()

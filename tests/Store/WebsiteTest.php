@@ -1,18 +1,21 @@
 <?php
+
 /**
  * Copyright © EcomDev B.V. All rights reserved.
  * See LICENSE for license details.
  */
+
 declare(strict_types=1);
 
 namespace EcomDev\Magento2TestEssentials\Store;
 
 use Magento\Store\Api\Data\WebsiteExtensionInterface;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class WebsiteTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function usesIdFromProvidedArguments()
     {
         $this->assertEquals(
@@ -22,7 +25,7 @@ class WebsiteTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function usesCodeFromProvidedArguments()
     {
         $this->assertEquals(
@@ -32,7 +35,7 @@ class WebsiteTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function defaultsToNameGeneratedFromCode()
     {
         $this->assertEquals(
@@ -42,7 +45,7 @@ class WebsiteTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function allowsToOverrideName()
     {
         $this->assertEquals(
@@ -53,7 +56,7 @@ class WebsiteTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function defaultsGroupIdToZero()
     {
         $this->assertEquals(
@@ -63,7 +66,7 @@ class WebsiteTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function allowsToOverrideDefaultGroup()
     {
         $this->assertEquals(
@@ -74,7 +77,7 @@ class WebsiteTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function mutatesCurrentWebsite()
     {
         $website = Website::new(1, "one");
@@ -92,7 +95,7 @@ class WebsiteTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function defaultsExtensionAttributesToNull()
     {
         $this->assertSame(
@@ -102,11 +105,10 @@ class WebsiteTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function allowsSettingExtensionAttributesToCustomValue()
     {
         $value = new class implements WebsiteExtensionInterface {
-
         };
 
         $this->assertSame(

@@ -1,19 +1,21 @@
 <?php
+
 /**
  * Copyright © EcomDev B.V. All rights reserved.
  * See LICENSE for license details.
  */
+
 declare(strict_types=1);
 
 namespace EcomDev\Magento2TestEssentials\Store;
 
-use EcomDev\Magento2TestEssentials\Store\StoreGroup;
 use Magento\Store\Api\Data\GroupExtensionInterface;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class StoreGroupTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function usesIdFromArguments()
     {
         $this->assertEquals(
@@ -23,7 +25,7 @@ class StoreGroupTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function usesCodeFromArguments()
     {
         $this->assertEquals(
@@ -33,7 +35,7 @@ class StoreGroupTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function defaultsNameValueBasedOnCode()
     {
         $this->assertEquals(
@@ -43,7 +45,7 @@ class StoreGroupTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function overridesName()
     {
         $this->assertEquals(
@@ -54,7 +56,7 @@ class StoreGroupTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function defaultsToAdminWebsite()
     {
         $this->assertEquals(
@@ -63,7 +65,7 @@ class StoreGroupTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function overridesWebsiteUsed()
     {
         $this->assertEquals(
@@ -74,7 +76,7 @@ class StoreGroupTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function defaultsToStandardRootCategory()
     {
         $this->assertEquals(
@@ -84,7 +86,7 @@ class StoreGroupTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function overridesRootCategory()
     {
         $this->assertEquals(
@@ -95,7 +97,7 @@ class StoreGroupTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function defaultsToAdminStoreView()
     {
         $this->assertEquals(
@@ -105,7 +107,7 @@ class StoreGroupTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function overridesDefaultStore()
     {
         $this->assertEquals(
@@ -116,7 +118,7 @@ class StoreGroupTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function mutatesStoreGroup()
     {
         $storeGroup = StoreGroup::new(1, 'one');
@@ -137,7 +139,7 @@ class StoreGroupTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function defaultsExtensionAttributesToNull()
     {
         $this->assertSame(
@@ -147,11 +149,10 @@ class StoreGroupTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function setsCustomExtensionAttributes()
     {
         $value = new class implements GroupExtensionInterface {
-
         };
 
         $this->assertSame(

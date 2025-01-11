@@ -1,11 +1,15 @@
 <?php
 
-
 namespace EcomDev\Magento2TestEssentials\Store;
 
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
 
+/**
+ * Fake store manager implementation
+ *
+ * Manages the collection of websites, store groups, and stores.
+ */
 class StoreManager implements StoreManagerInterface
 {
     /**
@@ -13,47 +17,39 @@ class StoreManager implements StoreManagerInterface
      *
      * @var Website[]
      */
-    private $websites = [];
+    private array $websites = [];
 
     /**
      * Id of default website
-     *
-     * @var int
      */
-    private $defaultWebsite = 0;
+    private int $defaultWebsite = 0;
 
     /**
      * List of stores by id
      *
      * @var Store[]
      */
-    private $stores = [];
+    private array $stores = [];
 
     /**
      * List of store groups by id
      *
      * @var StoreGroup[]
      */
-    private $groups = [];
+    private array $groups = [];
 
     /**
      * Current store
-     *
-     * @var int
      */
-    private $currentStore = 0;
+    private ?int $currentStore = 0;
 
     /**
      * Flag for checking if single store is enabled
-     *
-     * @var bool
      */
-    private $isAllowedSingleStoreMode = true;
+    private bool $isAllowedSingleStoreMode = true;
 
     /**
      * Crates a new instance of store manager
-     *
-     * @return self
      */
     public static function new(): self
     {
@@ -63,7 +59,6 @@ class StoreManager implements StoreManagerInterface
             ->withGroup(StoreGroup::new(0, 'admin'));
     }
 
-    /* @inerhitDoc */
     public function setIsSingleStoreModeAllowed($value)
     {
         $this->isAllowedSingleStoreMode = $value;
@@ -71,25 +66,25 @@ class StoreManager implements StoreManagerInterface
 
     /**
      * Checks if single store mode is applicable
-     *
-     * @return bool
      */
-    public function hasSingleStore()
+    public function hasSingleStore(): bool
     {
         return count($this->stores) < 3;
     }
 
     /**
      * Checks if only single store is available and single store mode is enabled
-     *
-     * @return bool
      */
-    public function isSingleStoreMode()
+    public function isSingleStoreMode(): bool
     {
         return $this->isAllowedSingleStoreMode && $this->hasSingleStore();
     }
 
-    public function getStore($storeId = null)
+
+    /**
+     * Gets website by identifiers or by current store view
+     */
+    public function getStore($storeId = null): Store
     {
         if ($storeId === null && $this->isSingleStoreMode()) {
             end($this->stores);
@@ -120,8 +115,10 @@ class StoreManager implements StoreManagerInterface
         );
     }
 
-    /* @inerhitDoc */
-    public function getStores($withDefault = false, $codeKey = false)
+    /**
+     * Returns list of stores
+     */
+    public function getStores($withDefault = false, $codeKey = false): array
     {
         $result = [];
         foreach ($this->stores as $store) {
@@ -137,8 +134,10 @@ class StoreManager implements StoreManagerInterface
         return $result;
     }
 
-    /* @inerhitDoc */
-    public function getWebsite($websiteId = null)
+    /**
+     * Gets website by identifier or current one from store
+     */
+    public function getWebsite($websiteId = null): Website
     {
         if ($websiteId === null) {
             $websiteId = $this->getStore()->getWebsiteId();
@@ -163,8 +162,10 @@ class StoreManager implements StoreManagerInterface
         );
     }
 
-    /* @inerhitDoc */
-    public function getWebsites($withDefault = false, $codeKey = false)
+    /**
+     * Lists all available websites
+     */
+    public function getWebsites($withDefault = false, $codeKey = false): array
     {
         $result = [];
         foreach ($this->websites as $website) {
@@ -178,22 +179,30 @@ class StoreManager implements StoreManagerInterface
         return $result;
     }
 
-    /* @inerhitDoc */
-    public function reinitStores()
+    /**
+     * Re-initializes current store
+     */
+    public function reinitStores(): void
     {
         $this->currentStore = 0;
     }
 
-    /* @inerhitDoc */
-    public function getDefaultStoreView()
+    /**
+     * Returns default store view of a default website
+     *
+     * @throws NoSuchEntityException
+     */
+    public function getDefaultStoreView(): Store
     {
         $website = $this->getWebsite($this->defaultWebsite);
         $group = $this->getGroup($website->getDefaultGroupId());
         return $this->getStore($group->getDefaultStoreId());
     }
 
-    /* @inerhitDoc */
-    public function getGroup($groupId = null)
+    /**
+     * Returns store group by identifier or by accessing current store or from default website
+     */
+    public function getGroup($groupId = null): StoreGroup
     {
         if ($groupId === null) {
             $groupId = $this->getStore()->getStoreGroupId();
@@ -212,7 +221,9 @@ class StoreManager implements StoreManagerInterface
         return $this->groups[$groupId];
     }
 
-    /* @inerhitDoc */
+    /**
+     * Retrieves the groups, optionally including the default group.
+     */
     public function getGroups($withDefault = false)
     {
         $result = [];

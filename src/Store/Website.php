@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright © EcomDev B.V. All rights reserved.
  * See LICENSE for license details.
@@ -11,18 +12,17 @@ namespace EcomDev\Magento2TestEssentials\Store;
 use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Api\Data\WebsiteExtensionInterface;
 
+/**
+ * Implementation that imitates real store model behaviour
+ */
 class Website implements WebsiteInterface
 {
-    private $id;
-    private $code;
-    private $name;
-    private $defaultGroupId = 0;
-    private $extensionAttributes;
+    private string $name;
+    private int $defaultGroupId = 0;
+    private ?WebsiteExtensionInterface $extensionAttributes = null;
 
-    private function __construct(int $id, string $code)
+    private function __construct(private int $id, private string $code)
     {
-        $this->id = $id;
-        $this->code = $code;
         $this->name = sprintf('Website %s', ucfirst($code));
     }
 
@@ -54,66 +54,55 @@ class Website implements WebsiteInterface
         return $website;
     }
 
-    /* @inerhitDoc  */
-    public function getId()
+
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /* @inerhitDoc  */
-    public function setId($id)
+    public function setId($id): self
     {
         $this->id = $id;
         return $this;
     }
-
-    /* @inerhitDoc  */
-    public function getCode()
+    public function getCode(): string
     {
         return $this->code;
     }
 
-    /* @inerhitDoc  */
-    public function setCode($code)
+    public function setCode($code): self
     {
         $this->code = $code;
         return $this;
     }
 
-    /* @inerhitDoc  */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /* @inerhitDoc  */
-    public function setName($name)
+    public function setName($name): self
     {
         $this->name = $name;
         return $this;
     }
 
-    /* @inerhitDoc  */
-    public function getDefaultGroupId()
+    public function getDefaultGroupId(): int
     {
         return $this->defaultGroupId;
     }
-
-    /* @inerhitDoc  */
-    public function setDefaultGroupId($defaultGroupId)
+    public function setDefaultGroupId($defaultGroupId): self
     {
         $this->defaultGroupId = $defaultGroupId;
         return $this;
     }
 
-    /* @inerhitDoc  */
-    public function getExtensionAttributes()
+    public function getExtensionAttributes(): ?WebsiteExtensionInterface
     {
         return $this->extensionAttributes;
     }
 
-    /* @inerhitDoc  */
-    public function setExtensionAttributes(WebsiteExtensionInterface $extensionAttributes)
+    public function setExtensionAttributes(WebsiteExtensionInterface $extensionAttributes): self
     {
         $this->extensionAttributes = $extensionAttributes;
         return $this;

@@ -17,14 +17,14 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @var object[]
      */
-    private $instances = [];
+    private array $instances = [];
 
     /**
      * Factories for specific types
      *
      * @var callable[]
      */
-    private $factories = [];
+    private array $factories = [];
 
     /**
      * Creates a new instance of ObjectManager
@@ -34,13 +34,17 @@ class ObjectManager implements ObjectManagerInterface
         return new self();
     }
 
-    /* @inerhitDoc */
+    /**
+     * Creates a new version of requested object type with passed arguments
+     */
     public function create($type, array $arguments = [])
     {
         return $this->createObject($type, $arguments);
     }
 
-    /* @inerhitDoc */
+    /**
+     * Returns shared default version of the object
+     */
     public function get($type)
     {
         if ($type === ObjectManagerInterface::class) {
@@ -54,12 +58,14 @@ class ObjectManager implements ObjectManagerInterface
         return $this->instances[$type];
     }
 
-    /* @inerhitDoc */
     public function configure(array $configuration)
     {
-        throw new LogicException('FakeObjectManager does not support native configure, use with other method for configuring it');
+        throw new LogicException('Fake ObjectManager does not support native configure, use with other method for configuring it');
     }
 
+    /**
+     * Adds an object to internal registries
+     */
     public function withObject(string $type, object $instance): self
     {
         $objectManager = clone $this;
@@ -69,10 +75,6 @@ class ObjectManager implements ObjectManagerInterface
 
     /**
      * Adds a factory for a specific type an object manager
-     *
-     * @param  string $type
-     * @param  callable $factory
-     * @return $this
      */
     public function withFactory(string $type, callable $factory): self
     {

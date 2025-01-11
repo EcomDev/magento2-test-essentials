@@ -1,18 +1,21 @@
 <?php
+
 /**
  * Copyright © EcomDev B.V. All rights reserved.
  * See LICENSE for license details.
  */
+
 declare(strict_types=1);
 
 namespace EcomDev\Magento2TestEssentials\Store;
 
 use Magento\Store\Api\Data\StoreExtensionInterface;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class StoreTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function returnsPassedStoreId()
     {
         $this->assertEquals(
@@ -21,7 +24,7 @@ class StoreTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function returnsPassedStoreCode()
     {
         $this->assertEquals(
@@ -30,7 +33,7 @@ class StoreTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function nameDefaultsToGeneratedValueFromCode()
     {
         $this->assertEquals(
@@ -39,7 +42,7 @@ class StoreTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function customNameOverridesGeneratedValue()
     {
         $this->assertEquals(
@@ -50,7 +53,7 @@ class StoreTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function defaultsToAdminWebsite()
     {
         $this->assertEquals(
@@ -59,7 +62,7 @@ class StoreTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function defaultsToAdminStore()
     {
         $this->assertEquals(
@@ -68,7 +71,7 @@ class StoreTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function overridesWebsiteWithCustomValue()
     {
         $this->assertEquals(
@@ -79,7 +82,7 @@ class StoreTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function overridesStoreGroupWithCustomValue()
     {
         $this->assertEquals(
@@ -90,7 +93,7 @@ class StoreTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function defaultsToEnabledStoreView()
     {
         $this->assertEquals(
@@ -99,7 +102,7 @@ class StoreTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function disablesStoreView()
     {
         $this->assertEquals(
@@ -110,7 +113,7 @@ class StoreTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function mutatesStoreData()
     {
         $store = Store::new(1, 'one');
@@ -130,7 +133,7 @@ class StoreTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function defaultsExtensionAttributesToNull()
     {
         $this->assertSame(
@@ -139,7 +142,7 @@ class StoreTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function allowsToSetExtensionAttributesOnStore()
     {
         $value = new class implements StoreExtensionInterface {
