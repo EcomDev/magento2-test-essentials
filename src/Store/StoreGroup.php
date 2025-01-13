@@ -15,20 +15,16 @@ use Magento\Store\Api\Data\GroupExtensionInterface;
 /**
  * Implementation that imitates real store group model behaviour
  */
-class StoreGroup implements GroupInterface
+final class StoreGroup implements GroupInterface
 {
-    private int $id;
-    private string $code;
     private string $name;
     private int $websiteId = 0;
     private int $rootCategoryId = 2;
     private int $defaultStoreId = 0;
     private ?GroupExtensionInterface $extensionAttributes = null;
 
-    private function __construct(int $id, string $code)
+    private function __construct(private int $id, private string $code)
     {
-        $this->id = $id;
-        $this->code = $code;
         $this->name = sprintf('Store Group %s', ucfirst($code));
     }
 

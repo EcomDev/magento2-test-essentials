@@ -15,7 +15,7 @@ use Magento\Store\Api\Data\WebsiteExtensionInterface;
 /**
  * Implementation that imitates real store model behaviour
  */
-class Website implements WebsiteInterface
+final class Website implements WebsiteInterface
 {
     private string $name;
     private int $defaultGroupId = 0;

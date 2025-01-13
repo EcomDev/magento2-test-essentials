@@ -15,7 +15,7 @@ use Magento\Store\Api\Data\StoreExtensionInterface;
 /**
  * Implementation that imitates real store model behaviour
  */
-class Store implements StoreInterface
+final class Store implements StoreInterface
 {
     /**
      * Store id

@@ -10,7 +10,7 @@ use ReflectionNamedType;
 /**
  * Simplistic implementation of Object Manager for testing
  */
-class ObjectManager implements ObjectManagerInterface
+final class ObjectManager implements ObjectManagerInterface
 {
     /**
      * List of objects instantiated by ObjectManager via get

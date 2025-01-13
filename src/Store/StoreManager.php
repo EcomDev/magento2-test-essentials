@@ -10,7 +10,7 @@ use Magento\Store\Model\StoreManagerInterface;
  *
  * Manages the collection of websites, store groups, and stores.
  */
-class StoreManager implements StoreManagerInterface
+final class StoreManager implements StoreManagerInterface
 {
     /**
      * Collection of websites by id
