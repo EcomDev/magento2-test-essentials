@@ -72,8 +72,6 @@ class YourTestedClassTest extends \PHPUnit\Framework\TestCase
 - [x] `StoreInterface` implementation as a simple data object for testing store related behaviour
 - [x] `GroupInterface` implementation as a simple data object for testing store group related behaviour
 - [x] `WebsiteInterface` implementation as a simple data object for testing website related behaviour
-- [ ] `ScopeConfigurationInterface` implementation for testing configuration dependent functionality
-- [ ] `ShoppingCartInterface` implementation for testing shopping cart related functionalities
-- [ ] `CustomerInterface` implementation for testing customer related functionalities 
-- [ ] `Customer/Session` implementation for testing functionalities that depend on current customer data
-- [ ] `Checkout/Session` implementation for testing functionalities that depend on current checkout data
+- [x] `ScopeConfigurationInterface` implementation for testing configuration dependent functionality
+- [ ] `DeploymentConfig` implementation for using in configuration caches, db connections, http cache, etc
+- [ ] `ResourceConnection` implementation for quick testing of database components

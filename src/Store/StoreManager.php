@@ -54,7 +54,7 @@ class StoreManager implements StoreManagerInterface
     public static function new(): self
     {
         return (new self())
-            ->withWebsite(Website::new(0, 'base'))
+            ->withWebsite(Website::new(0, 'admin'))
             ->withStore(Store::new(0, 'admin'))
             ->withGroup(StoreGroup::new(0, 'admin'));
     }

@@ -20,7 +20,7 @@ class StoreManagerTest extends TestCase
     {
         $this->assertEquals(
             [
-                Website::new(0, 'base')
+                Website::new(0, 'admin')
             ],
             StoreManager::new()->getWebsites(true)
         );
@@ -48,7 +48,7 @@ class StoreManagerTest extends TestCase
     {
         $this->assertEquals(
             [
-                'base' => Website::new(0, 'base'),
+                'admin' => Website::new(0, 'admin'),
                 'two' => Website::new(2, 'two'),
                 'three' => Website::new(3, 'three'),
                 'five' => Website::new(5, 'five'),
