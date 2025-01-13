@@ -12,7 +12,9 @@ namespace EcomDev\Magento2TestEssentials;
 use EcomDev\Magento2TestEssentials\Store\Store;
 use EcomDev\Magento2TestEssentials\Store\StoreManager;
 use EcomDev\Magento2TestEssentials\Store\Website;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -147,5 +149,48 @@ class ScopeConfigTest extends TestCase
                 $config->isSetFlag('some/flag/five'),
             ]
         );
+    }
+
+    #[Test]
+    #[DataProvider('combinations')]
+    public function checkVariousPathCombinations(string $path, string $scope, string $scopeCode, mixed $expectedValue)
+    {
+        $config = ScopeConfig::new()
+            ->withStoreManager(
+                StoreManager::new()
+                    ->withWebsite(
+                        Website::new(1, 'base')
+                    )
+                    ->withStore(
+                        Store::new(1, 'default')
+                            ->withWebsite(1, 1)
+                    )
+                    ->withStore(
+                        Store::new(2, 'english')
+                            ->withWebsite(1, 1)
+                    )
+            )
+            ->withDefaultValue('some/other', 'default_one_value')
+            ->withWebsiteValue('base', 'some/other/path_two', 'base_website_value')
+            ->withStoreValue('default', 'some/other/path_three', 'default_store_value')
+            ->withStoreValue('english', 'some/other', null);
+
+        $this->assertEquals(
+            $expectedValue,
+            $config->getValue($path, $scope, $scopeCode)
+        );
+    }
+
+    public static function combinations()
+    {
+        return [
+            ['some/other/path_three', ScopeInterface::SCOPE_STORE, 'default', 'default_store_value'],
+            ['some/other', ScopeInterface::SCOPE_STORES, 'english', [
+                'path_two' => 'base_website_value'
+            ]],
+            ['some/other/path_two', ScopeInterface::SCOPE_WEBSITE, 'base', 'base_website_value'],
+            ['some/other/path_two', ScopeInterface::SCOPE_WEBSITES, 'default', null],
+            ['some/other', ScopeConfigInterface::SCOPE_TYPE_DEFAULT, '', 'default_one_value'],
+        ];
     }
 }

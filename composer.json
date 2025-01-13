@@ -15,6 +15,10 @@
     "phpunit/phpunit": "^11.5",
     "brianium/paratest": "^7.7"
   },
+  "suggest": {
+    "ecomdev/testcontainers-magento-data": "Database Containers pre-populated with various data",
+    "ext-pdo": "For datbase connections with ResourceConnection implemenation"
+  },
   "license": [
     "MIT"
   ],
@@ -49,5 +53,6 @@
     "allow-plugins": {
       "magento/composer-dependency-version-audit-plugin": false
     }
-  }
+  },
+  "$schema": "https://getcomposer.org/schema.json"
 }

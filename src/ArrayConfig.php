@@ -32,6 +32,10 @@ final class ArrayConfig
 
     public function getValueByPath(string $scope, string $path): mixed
     {
+        if ($path === '') {
+            return $this->data[$scope] ?? [];
+        }
+
         $parts = explode('/', $path);
         $current = $this->data[$scope] ?? [];
         foreach ($parts as $part) {
