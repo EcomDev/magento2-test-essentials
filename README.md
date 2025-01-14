@@ -105,7 +105,7 @@ class YourServiceTest extends TestCase
         $this->assertEquals(1, $product->getStoreId());
     }
     
-     #[Test]
+    #[Test]
     public function keepsOriginalStoreId() 
     {
         $service = new YourService(
