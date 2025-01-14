@@ -34,24 +34,34 @@ final class DeploymentConfig extends MagentoDeploymentConfig
         string $username,
         string $password,
         string $dbname,
-        string $tablePrefix = ''
+        string $connectionName = 'default'
     ): self {
-        return $this->withSetting('db/table_prefix', $tablePrefix)
-            ->withSetting('db/connection/default/host', $host)
-            ->withSetting('db/connection/default/username', $username)
-            ->withSetting('db/connection/default/password', $password)
-            ->withSetting('db/connection/default/dbname', $dbname)
-            ->withSetting('db/connection/default/active', 1)
-            ->withSetting('db/connection/default/engine', 'innodb')
-            ->withSetting('db/connection/default/initStatements', ['SET NAMES utf8'])
-            ->withSetting('db/connection/default/driver_options', [
-            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
-        ]);
+        return $this
+            ->withSetting($this->databaseSettingPath($connectionName, 'host'), $host)
+            ->withSetting($this->databaseSettingPath($connectionName, 'username'), $username)
+            ->withSetting($this->databaseSettingPath($connectionName, 'password'), $password)
+            ->withSetting($this->databaseSettingPath($connectionName, 'dbname'), $dbname)
+            ->withSetting($this->databaseSettingPath($connectionName, 'active'), 1)
+            ->withSetting($this->databaseSettingPath($connectionName, 'engine'), 'innodb')
+            ->withSetting($this->databaseSettingPath($connectionName, 'initStatements'), ['SET NAMES utf8'])
+            ->withSetting($this->databaseSettingPath($connectionName, 'driver_options'), [
+                PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
+            ]);
     }
 
     public function withSetting(string $path, mixed $value): self
     {
         $data = $this->data->withValue('file', $path, $value);
         return new self($data);
+    }
+
+    public function withTablePrefix(string $prefix): self
+    {
+        return $this->withSetting('db/table_prefix', $prefix);
+    }
+
+    private function databaseSettingPath(string $connectionName, string $path)
+    {
+        return sprintf('db/connection/%s/%s', $connectionName, $path);
     }
 }
