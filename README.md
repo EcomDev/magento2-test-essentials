@@ -1,4 +1,4 @@
-# Essentials for testing Magento 2 modules
+# 🎯 Essentials for testing Magento 2 modules
 
 Using mocking frameworks for testing Magento 2 modules is counterproductive as you replicate line by line your actual calls to a magento implementation.
 
@@ -11,9 +11,14 @@ As well as set of fake objects there is an  `ObjectManagerInterface` implementat
 Each fake object is covered by automated tests to make sure that behaviour is correct your tests can test your code specific behaviour by using different scenarios.
 
 
-## Installation
+## 📦 Installation
 ```bash
 composer require --dev ecomdev/magento2-test-essentials
+```
+
+For database based tests it is recommended also to install collection of [testcontainers](https://github.com/EcomDev/testcontainer-magento-data):
+```bash
+composer require --dev ecomdev/testcontainers-magento-data
 ```
 
 ## Examples
@@ -56,7 +61,7 @@ class YourService
 }
 ```
 
-
+**YourServiceTest.php**
 ```php
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
@@ -91,7 +96,7 @@ class YourServiceTest extends TestCase
         
         // Creates product without any constructor
         // but if you rely on data fields, it works great
-        $product = $this->objectManager->create(Product::class); 
+        $product = $this->objectManager->get(Product::class); 
         
         $applier->applyCurrentStoreToProduct(
             $product
@@ -109,7 +114,7 @@ class YourServiceTest extends TestCase
             $this->objectManager->get(ScopeConfig::class)
         );
         
-        $product = $this->objectManager->create(Product::class); 
+        $product = $this->objectManager->get(Product::class);
          
         $applier->applyCurrentStoreToProduct(
             $product
@@ -120,14 +125,78 @@ class YourServiceTest extends TestCase
 }
 ```
 
-### Easy Resource Model Testing
+### Easy Real Database Integration Testing
 
+In combination with magento data [testcontainers](https://github.com/EcomDev/testcontainer-magento-data-php) it is possible to write quick integration tests
+
+Imagine your service depends on Magento's `ResourceConnection` which is almost impossible to instantiate without installing whole Magento app:
+```php
+use Magento\Framework\App\ResourceConnection;
+
+class SomeSimpleService 
+{
+    public function __construct(private readonly ResourceConnection $resourceConnection)
+    {
+    }
+    
+    public function totalNumberOfSimpleProducts(): int 
+    {
+        $connection = $this->resourceConnection->getConnection();
+        $select = $connection->select()
+            ->from(
+                $this->resourceConnection->getTableName('catalog_product_entity'),
+                 ['count' => 'COUNT(*)']
+             )
+            ->where('type_id = ?', 'simple')
+            
+        return (int)$connection->fetchOne($select);
+    }    
+}
 ```
-TBD
+
+Now you can create all the required dependencies with the help of `IntegrationUtility` by specifying connection details:
+```php
+
+use EcomDev\TestContainers\MagentoData\DbConnectionSettings;
+use EcomDev\TestContainers\MagentoData\DbContainerBuilder;
+use Magento\Framework\App\ResourceConnection;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
+
+class IntegrationUtilityTest extends TestCase
+{
+    #[Test]
+    public function returnsCorrectAmountOfSimpleProductsInSampleDataDb()
+    {
+        $container = DbContainerBuilder::mysql()
+            ->withSampleData()
+            ->build();
+        
+        $connectionSettings = $connection->getConnectionSettings();
+        
+        $objectManager = IntegrationUtility::setupDatabaseObjects(
+            DeploymentConfig::new()
+                ->withDatabaseConnection(
+                    $connection->host,
+                    $connection->user,
+                    $connection->password,
+                    $connection->database
+                )
+        );
+        
+        $service = $objectManager->get(SomeSimpleService::class);
+        
+        $this->assertEquals(
+            1891,
+            $service->totalNumberOfSimpleProducts()
+        );
+    }
+}
 ```
 
+Now there is no excuse to not write tests for your database components!
 
-## Features
+##  ✨ Features
 
 - [x] `ObjectManagerInterface` implementation which mimics platform's behaviour
 - [x] `StoreInterface` implementation as a simple data object for testing store related behaviour
@@ -135,4 +204,8 @@ TBD
 - [x] `WebsiteInterface` implementation as a simple data object for testing website related behaviour
 - [x] `ScopeConfigurationInterface` implementation for testing configuration dependent functionality
 - [x] `DeploymentConfig` implementation for using in configuration caches, db connections, http cache, etc
-- [ ] `ResourceConnection` implementation for quick testing of database components
+- [x] `ResourceConnection` implementation for quick testing of database components
+
+## 📜 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.

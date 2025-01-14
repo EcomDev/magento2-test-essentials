@@ -43,7 +43,7 @@ final class DeploymentConfig extends MagentoDeploymentConfig
             ->withSetting($this->databaseSettingPath($connectionName, 'dbname'), $dbname)
             ->withSetting($this->databaseSettingPath($connectionName, 'active'), 1)
             ->withSetting($this->databaseSettingPath($connectionName, 'engine'), 'innodb')
-            ->withSetting($this->databaseSettingPath($connectionName, 'initStatements'), ['SET NAMES utf8'])
+            ->withSetting($this->databaseSettingPath($connectionName, 'initStatements'), 'SET NAMES utf8')
             ->withSetting($this->databaseSettingPath($connectionName, 'driver_options'), [
                 PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
             ]);

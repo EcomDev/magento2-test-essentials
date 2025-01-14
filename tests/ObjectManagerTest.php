@@ -170,6 +170,20 @@ class ObjectManagerTest extends TestCase
     }
 
     #[Test]
+    public function usesDefaultArgumentsForObjectCreation()
+    {
+        $objectManager = ObjectManager::new()
+            ->withDefaultArguments(ObjectWithDependencyOneAndTwo::class, [
+                'someText' => 'Text from default arguments',
+            ]);
+
+        $this->assertEquals(
+            new ObjectWithDependencyOneAndTwo(new DependencyOne(), new DependencyTwo(), 'Text from default arguments'),
+            $objectManager->create(ObjectWithDependencyOneAndTwo::class)
+        );
+    }
+
+    #[Test]
     public function creationOfObjectWithScalarArgumentFailsWhenNoValueProvided()
     {
         $this->expectException(InvalidArgumentException::class);

@@ -10,6 +10,6 @@
       <directory>src</directory>
     </include>
   </source>
-  <coverage ignoreDeprecatedCodeUnits="true" pathCoverage="true">
+  <coverage ignoreDeprecatedCodeUnits="true">
   </coverage>
 </phpunit>

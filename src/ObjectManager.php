@@ -27,6 +27,13 @@ final class ObjectManager implements ObjectManagerInterface
     private array $factories = [];
 
     /**
+     * List of default arguments for an object creation
+     *
+     * @var array[]
+     */
+    private array $defaultArguments = [];
+
+    /**
      * Creates a new instance of ObjectManager
      */
     public static function new(): self
@@ -84,6 +91,16 @@ final class ObjectManager implements ObjectManagerInterface
     }
 
     /**
+     * Adds a factory for a specific type an object manager
+     */
+    public function withDefaultArguments(string $type, array $arguments): self
+    {
+        $objectManager = clone $this;
+        $objectManager->defaultArguments[$type] = $arguments;
+        return $objectManager;
+    }
+
+    /**
      * Creates an instance of an object
      */
     private function createObject(string $type, array $arguments = null): object
@@ -100,6 +117,7 @@ final class ObjectManager implements ObjectManagerInterface
             return $class->newInstanceWithoutConstructor();
         }
 
+        $arguments += $this->defaultArguments[$type] ?? [];
         $constructorArgs = [];
 
         foreach ($constructor->getParameters() as $parameter) {

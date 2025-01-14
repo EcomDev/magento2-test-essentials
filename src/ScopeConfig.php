@@ -78,17 +78,28 @@ final class ScopeConfig implements ScopeConfigInterface
         );
     }
 
+    private function unifyScope(string $scopeType): string
+    {
+        return match ($scopeType) {
+            ScopeInterface::SCOPE_WEBSITES, ScopeInterface::SCOPE_WEBSITE => ScopeInterface::SCOPE_WEBSITES,
+            ScopeInterface::SCOPE_STORES, ScopeInterface::SCOPE_STORE => ScopeInterface::SCOPE_STORES,
+            default => ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+        };
+    }
+
     /**
      * Returns merged configuration value for requested scope and path
      */
     public function getValue($path, $scopeType = ScopeConfigInterface::SCOPE_TYPE_DEFAULT, $scopeCode = null): mixed
     {
+        $scopeType = $this->unifyScope($scopeType);
+
         $scope = match ($scopeType) {
-            ScopeInterface::SCOPE_WEBSITE, ScopeInterface::SCOPE_WEBSITES => sprintf(
+            ScopeInterface::SCOPE_WEBSITES => sprintf(
                 '%s/%s',
                 ScopeInterface::SCOPE_WEBSITES, $scopeCode
             ),
-            ScopeInterface::SCOPE_STORE, ScopeInterface::SCOPE_STORES  => sprintf(
+            ScopeInterface::SCOPE_STORES  => sprintf(
                 '%s/%s',
                 ScopeInterface::SCOPE_STORES, $scopeCode
             ),
@@ -96,8 +107,8 @@ final class ScopeConfig implements ScopeConfigInterface
         };
 
         $fallbackValue = match ($scopeType) {
-            ScopeInterface::SCOPE_WEBSITES, ScopeInterface::SCOPE_WEBSITE => $this->getValue($path, ScopeConfigInterface::SCOPE_TYPE_DEFAULT),
-            ScopeInterface::SCOPE_STORES, ScopeInterface::SCOPE_STORE => $this->getValue(
+            ScopeInterface::SCOPE_WEBSITES => $this->getValue($path),
+            ScopeInterface::SCOPE_STORES => $this->getValue(
                 $path,
                 ScopeInterface::SCOPE_WEBSITE,
                 $this->storeManager->getWebsite(

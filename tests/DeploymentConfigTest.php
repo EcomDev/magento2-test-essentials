@@ -46,9 +46,7 @@ class DeploymentConfigTest extends TestCase
                     'password' => 'magento_pwd',
                     'dbname' => 'magento2',
                     'engine' => 'innodb',
-                    'initStatements' => [
-                        'SET NAMES utf8',
-                    ],
+                    'initStatements' => 'SET NAMES utf8',
                     'active' => 1,
                     'driver_options' => [
                         \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
@@ -73,9 +71,7 @@ class DeploymentConfigTest extends TestCase
                     'password' => 'magento_pwd',
                     'dbname' => 'magento2_indexer',
                     'engine' => 'innodb',
-                    'initStatements' => [
-                        'SET NAMES utf8',
-                    ],
+                    'initStatements' => 'SET NAMES utf8',
                     'active' => 1,
                     'driver_options' => [
                         \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
