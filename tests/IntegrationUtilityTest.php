@@ -24,7 +24,9 @@ class IntegrationUtilityTest extends TestCase
                 )
         );
 
-        /** @var ResourceConnection $resourceConnection */
+        /**
+ * @var ResourceConnection $resourceConnection
+*/
         $resourceConnection = $objectManager->get(ResourceConnection::class);
         $connection = $resourceConnection->getConnection();
         $select = $connection->select()
