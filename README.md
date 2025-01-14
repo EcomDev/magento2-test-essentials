@@ -1,4 +1,5 @@
 # 🎯 Essentials for testing Magento 2 modules
+[![PHP Package](https://github.com/EcomDev/magento2-test-essentials/actions/workflows/php-package.yml/badge.svg)](https://github.com/EcomDev/magento2-test-essentials/actions/workflows/php-package.yml)
 
 Using mocking frameworks for testing Magento 2 modules is counterproductive as you replicate line by line your actual calls to a magento implementation.
 
