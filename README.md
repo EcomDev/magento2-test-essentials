@@ -99,7 +99,7 @@ class YourServiceTest extends TestCase
         // but if you rely on data fields, it works great
         $product = $this->objectManager->get(Product::class); 
         
-        $applier->applyCurrentStoreToProduct(
+        $service->applyCurrentStoreToProduct(
             $product
         );
         
@@ -117,7 +117,7 @@ class YourServiceTest extends TestCase
         
         $product = $this->objectManager->get(Product::class);
          
-        $applier->applyCurrentStoreToProduct(
+        $service->applyCurrentStoreToProduct(
             $product
         );
         
@@ -173,15 +173,15 @@ class IntegrationUtilityTest extends TestCase
             ->withSampleData()
             ->build();
         
-        $connectionSettings = $connection->getConnectionSettings();
+        $connectionSettings = $container->getConnectionSettings();
         
         $objectManager = IntegrationUtility::setupDatabaseObjects(
             DeploymentConfig::new()
                 ->withDatabaseConnection(
-                    $connection->host,
-                    $connection->user,
-                    $connection->password,
-                    $connection->database
+                    $connectionSettings->host,
+                    $connectionSettings->user,
+                    $connectionSettings->password,
+                    $connectionSettings->database
                 )
         );
         
