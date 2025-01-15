@@ -99,7 +99,7 @@ class YourServiceTest extends TestCase
         // but if you rely on data fields, it works great
         $product = $this->objectManager->get(Product::class); 
         
-        $applier->applyCurrentStoreToProduct(
+        $service->applyCurrentStoreToProduct(
             $product
         );
         
@@ -117,7 +117,7 @@ class YourServiceTest extends TestCase
         
         $product = $this->objectManager->get(Product::class);
          
-        $applier->applyCurrentStoreToProduct(
+        $service->applyCurrentStoreToProduct(
             $product
         );
         
@@ -169,7 +169,7 @@ class IntegrationUtilityTest extends TestCase
     #[Test]
     public function returnsCorrectAmountOfSimpleProductsInSampleDataDb()
     {
-        $container = DbContainerBuilder::mysql()
+        $connection = DbContainerBuilder::mysql()
             ->withSampleData()
             ->build();
         
@@ -178,10 +178,10 @@ class IntegrationUtilityTest extends TestCase
         $objectManager = IntegrationUtility::setupDatabaseObjects(
             DeploymentConfig::new()
                 ->withDatabaseConnection(
-                    $connection->host,
-                    $connection->user,
-                    $connection->password,
-                    $connection->database
+                    $connectionSettings->host,
+                    $connectionSettings->user,
+                    $connectionSettings->password,
+                    $connectionSettings->database
                 )
         );
         
