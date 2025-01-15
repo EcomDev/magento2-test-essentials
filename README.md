@@ -169,11 +169,11 @@ class IntegrationUtilityTest extends TestCase
     #[Test]
     public function returnsCorrectAmountOfSimpleProductsInSampleDataDb()
     {
-        $connection = DbContainerBuilder::mysql()
+        $container = DbContainerBuilder::mysql()
             ->withSampleData()
             ->build();
         
-        $connectionSettings = $connection->getConnectionSettings();
+        $connectionSettings = $container->getConnectionSettings();
         
         $objectManager = IntegrationUtility::setupDatabaseObjects(
             DeploymentConfig::new()
