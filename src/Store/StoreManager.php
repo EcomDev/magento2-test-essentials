@@ -100,7 +100,7 @@ final class StoreManager implements StoreManagerInterface
             return $this->getDefaultStoreView();
         }
 
-        if (isset($this->stores[$storeId])) {
+        if ($storeId !== null && isset($this->stores[$storeId])) {
             return $this->stores[$storeId];
         }
 
