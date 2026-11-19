@@ -1,5 +1,31 @@
 # Changelog
 
+## [2.0.0](https://github.com/EcomDev/magento2-test-essentials/compare/v1.0.0...v2.0.0) (2026-11-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop PHP8.2 and PHP8.3 support
+* compatibility with recent magento versions
+
+### Features
+
+* drop PHP8.2 and PHP8.3 support ([e9580a2](https://github.com/EcomDev/magento2-test-essentials/commit/e9580a2670be504b89040e85ddf3bc3098ec2e56))
+
+
+### Bug Fixes
+
+* compatibility with recent magento versions ([ad63b1b](https://github.com/EcomDev/magento2-test-essentials/commit/ad63b1bccce610ac44e5899e34972f451b27c253))
+* depracated null in array key ([a1480b1](https://github.com/EcomDev/magento2-test-essentials/commit/a1480b17d41e62934da0960884809ff8153a3c59))
+* depracated PDO constant usage ([c4057c5](https://github.com/EcomDev/magento2-test-essentials/commit/c4057c5529c2ca042f64e5d4fc65acf476cc3da8))
+* depracated PDO constant usage ([ab75e9f](https://github.com/EcomDev/magento2-test-essentials/commit/ab75e9f7bfafdc49ceabb22aeea86db670177dc0))
+* implicit nullable objects error ([80756b8](https://github.com/EcomDev/magento2-test-essentials/commit/80756b8e238c6ae2c435233c81927b80306cc179))
+
+
+### Miscellaneous Chores
+
+* add depracations as build failure ([1c851a2](https://github.com/EcomDev/magento2-test-essentials/commit/1c851a25b633f0513fa42caaf446608db1095665))
+
 ## 1.0.0 (2025-01-14)
 
 
