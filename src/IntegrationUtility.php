@@ -2,7 +2,6 @@
 
 namespace EcomDev\Magento2TestEssentials;
 
-use Magento\Backend\Helper\Js;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\App\ResourceConnection\ConfigInterface;
 use Magento\Framework\App\ResourceConnection\ConnectionAdapterInterface;
@@ -27,6 +26,7 @@ use Magento\Framework\Model\ResourceModel\Type\Db\ConnectionFactoryInterface;
 use Magento\Framework\Model\ResourceModel\Type\Db\Pdo\Mysql;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Framework\Setup\Declaration\Schema\Dto\Factories\Table;
 
 final class IntegrationUtility
 {
@@ -42,9 +42,16 @@ final class IntegrationUtility
                 ConnectionFactoryInterface::class,
                 static fn ($objectManager) => new ConnectionFactory($objectManager)
             )
-            ->withDefaultArguments(PdoMysql::class, [
-                'serializer' => new Json()
-            ])
+            ->withFactory(
+                PdoMysql::class,
+                static fn ($objectManager, $arguments) => $objectManager->createAutowiredObject(
+                    PdoMysql::class,
+                    $arguments + [
+                        'serializer' => new Json(),
+                        'dtoFactoriesTable' => $objectManager->get(Table::class)
+                    ]
+                )
+            )
             ->withObject(LoggerInterface::class, new Quiet())
             ->withObject(SerializerInterface::class, new Json())
             ->withFactory(SelectRenderer::class, static fn ($objectManager) => new SelectRenderer([

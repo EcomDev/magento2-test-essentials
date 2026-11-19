@@ -109,6 +109,11 @@ final class ObjectManager implements ObjectManagerInterface
             return $this->factories[$type]($this, $arguments ?? []);
         }
 
+        return $this->createAutowiredObject($type, $arguments);
+    }
+
+    public function createAutowiredObject(string $type, ?array $arguments): object
+    {
         $class = new ReflectionClass($type);
 
         $constructor = $class->getConstructor();
