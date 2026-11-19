@@ -2,6 +2,7 @@
 
 namespace EcomDev\Magento2TestEssentials;
 
+use PDO\Mysql;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -49,7 +50,7 @@ class DeploymentConfigTest extends TestCase
                     'initStatements' => 'SET NAMES utf8',
                     'active' => 1,
                     'driver_options' => [
-                        \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
+                        Mysql::ATTR_SSL_VERIFY_SERVER_CERT => false
                     ],
                 ]
             ],
@@ -74,7 +75,7 @@ class DeploymentConfigTest extends TestCase
                     'initStatements' => 'SET NAMES utf8',
                     'active' => 1,
                     'driver_options' => [
-                        \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
+                        Mysql::ATTR_SSL_VERIFY_SERVER_CERT => false
                     ],
                 ]
             ],
