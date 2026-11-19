@@ -103,7 +103,7 @@ final class ObjectManager implements ObjectManagerInterface
     /**
      * Creates an instance of an object
      */
-    private function createObject(string $type, array $arguments = null): object
+    private function createObject(string $type, ?array $arguments = null): object
     {
         if (isset($this->factories[$type])) {
             return $this->factories[$type]($this, $arguments ?? []);
@@ -112,7 +112,7 @@ final class ObjectManager implements ObjectManagerInterface
         return $this->createAutowiredObject($type, $arguments);
     }
 
-    public function createAutowiredObject(string $type, ?array $arguments): object
+    public function createAutowiredObject(string $type, ?array $arguments = null): object
     {
         $class = new ReflectionClass($type);
 
