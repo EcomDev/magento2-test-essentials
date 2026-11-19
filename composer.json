@@ -14,7 +14,7 @@
     "squizlabs/php_codesniffer": "^4.0",
     "phpunit/phpunit": "^13.4",
     "brianium/paratest": "^7.29.0",
-    "ecomdev/testcontainers-magento-data":"^2.0"
+    "ecomdev/testcontainers-magento-data": "^2.0"
   },
   "suggest": {
     "ecomdev/testcontainers-magento-data": "Database Containers pre-populated with various data",
