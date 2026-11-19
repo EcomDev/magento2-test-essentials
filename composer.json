@@ -48,7 +48,7 @@
     }
   },
   "scripts": {
-    "test": "XDEBUG_MODE=coverage paratest --coverage-text",
+    "test": "XDEBUG_MODE=coverage paratest --fail-on-all-issues --display-deprecations --coverage-text",
     "format:check": "phpcs",
     "format:write": "phpcbf"
   },
