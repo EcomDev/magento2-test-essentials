@@ -6,13 +6,13 @@ on:
 jobs:
   format-check:
     name: Check PSR12 Standarts
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: 8.4
           tools: composer:v2
       - run: composer install
         shell: bash
@@ -20,14 +20,14 @@ jobs:
         shell: bash
   tests:
     name: Run Tests
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         php-version:
-          - 8.2
-          - 8.3
+          - 8.4
+          - 8.5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
