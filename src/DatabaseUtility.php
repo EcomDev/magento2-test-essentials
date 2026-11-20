@@ -30,6 +30,12 @@ final readonly class DatabaseUtility
             ->isTableExists($this->resourceConnection->getTableName($tableName));
     }
 
+    /**
+     * Populate table with data
+     *
+     * @param list<string> $columns
+     * @param list<list<scalar>> $data
+     */
     public function populateTable(
         string $tableName,
         array $columns,
@@ -44,6 +50,14 @@ final readonly class DatabaseUtility
             );
     }
 
+    /**
+     * Fetches table data from table
+     *
+     * @param list<string> $columns
+     * @param array<string, scalar|array<scalar>> $conditions
+     *
+     * @return list<list<scalar>>
+     */
     public function tableData(
         string $tableName,
         array $columns,
@@ -57,12 +71,13 @@ final readonly class DatabaseUtility
             ->from($this->resourceConnection->getTableName($tableName), $columns);
 
         foreach ($conditions as $condition => $value) {
+            // @phpstan-ignore-next-line
             $select->where($condition, $value);
         }
 
         $result = [];
 
-        $statement = $connection->prepare($select);
+        $statement = $connection->prepare((string)$select);
         $statement->execute();
 
         while ($row = $statement->fetch(PDO::FETCH_NUM)) {
@@ -73,10 +88,15 @@ final readonly class DatabaseUtility
         return $result;
     }
 
+    /**
+     * Wrapper for connection retrieval with proper type hint
+     *
+     * @return Mysql
+     */
     private function connection(string $connectionName): AdapterInterface
     {
-        $connection = $this->resourceConnection->getConnection($connectionName);
-        return $connection;
+        // @phpstan-ignore-next-line
+        return $this->resourceConnection->getConnection($connectionName);
     }
 
     /**
@@ -86,7 +106,19 @@ final readonly class DatabaseUtility
      */
     private function disableStringify(AdapterInterface $adapter): void
     {
-        $adapter->getConnection()->setAttribute(PDO\Mysql::ATTR_STRINGIFY_FETCHES, false);
+        $this->stringifyAttribute($adapter, false);
+    }
+
+    /**
+     * Stringify attribute on adapter
+     *
+     * @param Mysql $adapter
+     */
+    private function stringifyAttribute(AdapterInterface $adapter, bool $value): void
+    {
+        $connection = $adapter->getConnection();
+        // @phpstan-ignore-next-line
+        $connection->setAttribute(PDO\Mysql::ATTR_STRINGIFY_FETCHES, $value);
     }
 
     /**
@@ -96,6 +128,6 @@ final readonly class DatabaseUtility
      */
     private function restoreStringify(AdapterInterface $adapter): void
     {
-        $adapter->getConnection()->setAttribute(PDO\Mysql::ATTR_STRINGIFY_FETCHES, true);
+        $this->stringifyAttribute($adapter, false);
     }
 }

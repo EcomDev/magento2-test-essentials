@@ -9,6 +9,11 @@ namespace EcomDev\Magento2TestEssentials;
  */
 final class ArrayConfig
 {
+    /**
+     * Array configuration
+     *
+     * @param array<string, mixed> $data
+     */
     private function __construct(private readonly array $data = [])
     {
     }

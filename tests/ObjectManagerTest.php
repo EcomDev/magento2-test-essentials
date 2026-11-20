@@ -251,6 +251,26 @@ class ObjectManagerTest extends TestCase
     }
 
     #[Test]
+    public function doesNotAllowUnionTypesAutoResolving()
+    {
+        $objectManager = ObjectManager::new()
+            ->withAutowire(ObjectWithUnionType::class);
+
+        $this->expectException(InvalidArgumentException::class);
+        $objectManager->get(ObjectWithUnionType::class);
+    }
+
+    #[Test]
+    public function doesNotAllowIntersectTypesAutoResolving()
+    {
+        $objectManager = ObjectManager::new()
+            ->withAutowire(ObjectWithIntersectionType::class);
+
+        $this->expectException(InvalidArgumentException::class);
+        $objectManager->get(ObjectWithIntersectionType::class);
+    }
+
+    #[Test]
     public function createAutoWiredObject()
     {
         $dependency = ObjectManager::new()->createAutowiredObject(ObjectWithDependencyOneAndTwo::class, []);

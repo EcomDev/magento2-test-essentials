@@ -15,6 +15,11 @@ final class DeploymentConfig extends MagentoDeploymentConfig
             {
             }
 
+            /**
+             * Loads stub of array configuration
+             *
+             * @return array<string, mixed>
+             */
             public function load($fileKey = null)
             {
                 return $this->data->getValueByPath('file', '');
@@ -60,7 +65,7 @@ final class DeploymentConfig extends MagentoDeploymentConfig
         return $this->withSetting('db/table_prefix', $prefix);
     }
 
-    private function databaseSettingPath(string $connectionName, string $path)
+    private function databaseSettingPath(string $connectionName, string $path): string
     {
         return sprintf('db/connection/%s/%s', $connectionName, $path);
     }

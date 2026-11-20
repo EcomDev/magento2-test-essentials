@@ -59,58 +59,60 @@ final class IntegrationUtility
             ->withObject(LoggerInterface::class, new Quiet())
             ->withObject(PsrLoggerInterface::class, new NullLogger())
             ->withObject(SerializerInterface::class, new Json())
-            ->withFactory(SelectRenderer::class, static fn ($objectManager) => new SelectRenderer([
-                'distinct' => [
-                    'renderer' => $objectManager->create(DistinctRenderer::class),
-                    'sort' => 100,
-                    'part' => 'distinct',
-                ],
-                'columns' => [
-                    'renderer' => $objectManager->create(ColumnsRenderer::class),
-                    'sort' => 200,
-                    'part' => 'columns',
-                ],
-                'union' => [
-                    'renderer' => $objectManager->create(UnionRenderer::class),
-                    'sort' => 300,
-                    'part' => 'union',
-                ],
-                'from' => [
-                    'renderer' => $objectManager->create(FromRenderer::class),
-                    'sort' => 400,
-                    'part' => 'from',
-                ],
-                'where' => [
-                    'renderer' => $objectManager->create(WhereRenderer::class),
-                    'sort' => 500,
-                    'part' => 'where',
-                ],
-                'group' => [
-                    'renderer' => $objectManager->create(GroupRenderer::class),
-                    'sort' => 600,
-                    'part' => 'group',
-                ],
-                'having' => [
-                    'renderer' => $objectManager->create(HavingRenderer::class),
-                    'sort' => 700,
-                    'part' => 'having',
-                ],
-                'order' => [
-                    'renderer' => $objectManager->create(OrderRenderer::class),
-                    'sort' => 800,
-                    'part' => 'order',
-                ],
-                'limit' => [
-                    'renderer' => $objectManager->create(LimitRenderer::class),
-                    'sort' => 900,
-                    'part' => 'limitcount',
-                ],
-                'for_update' => [
-                    'renderer' => $objectManager->create(ForUpdateRenderer::class),
-                    'sort' => 1000,
-                    'part' => 'forupdate'
-                ]
-            ]))
+            ->withFactory(SelectRenderer::class, static fn ($objectManager) =>
+                // @phpstan-ignore argument.type
+                new SelectRenderer([
+                    'distinct' => [
+                        'renderer' => $objectManager->create(DistinctRenderer::class),
+                        'sort' => 100,
+                        'part' => 'distinct',
+                    ],
+                    'columns' => [
+                        'renderer' => $objectManager->create(ColumnsRenderer::class),
+                        'sort' => 200,
+                        'part' => 'columns',
+                    ],
+                    'union' => [
+                        'renderer' => $objectManager->create(UnionRenderer::class),
+                        'sort' => 300,
+                        'part' => 'union',
+                    ],
+                    'from' => [
+                        'renderer' => $objectManager->create(FromRenderer::class),
+                        'sort' => 400,
+                        'part' => 'from',
+                    ],
+                    'where' => [
+                        'renderer' => $objectManager->create(WhereRenderer::class),
+                        'sort' => 500,
+                        'part' => 'where',
+                    ],
+                    'group' => [
+                        'renderer' => $objectManager->create(GroupRenderer::class),
+                        'sort' => 600,
+                        'part' => 'group',
+                    ],
+                    'having' => [
+                        'renderer' => $objectManager->create(HavingRenderer::class),
+                        'sort' => 700,
+                        'part' => 'having',
+                    ],
+                    'order' => [
+                        'renderer' => $objectManager->create(OrderRenderer::class),
+                        'sort' => 800,
+                        'part' => 'order',
+                    ],
+                    'limit' => [
+                        'renderer' => $objectManager->create(LimitRenderer::class),
+                        'sort' => 900,
+                        'part' => 'limitcount',
+                    ],
+                    'for_update' => [
+                        'renderer' => $objectManager->create(ForUpdateRenderer::class),
+                        'sort' => 1000,
+                        'part' => 'forupdate'
+                    ]
+                ]))
             ->withAutowire(SelectFactory::class)
             ->withAutowire(MysqlFactory::class)
             ->withFactory(

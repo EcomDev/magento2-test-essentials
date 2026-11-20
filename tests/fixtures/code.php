@@ -51,6 +51,22 @@ namespace EcomDev\Magento2TestEssentials {
         ) {
         }
     }
+
+    readonly class ObjectWithUnionType
+    {
+        public function __construct(
+            private DependencyOne|DependencyTwo $anyDependency
+        ) {
+        }
+    }
+
+    readonly class ObjectWithIntersectionType
+    {
+        public function __construct(
+            private DependencyOne&DependencyTwo $anyDependency
+        ) {
+        }
+    }
 }
 
 namespace Magento\Store\Api\Data {

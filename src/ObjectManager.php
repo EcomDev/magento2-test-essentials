@@ -5,7 +5,9 @@ namespace EcomDev\Magento2TestEssentials;
 use LogicException;
 use Magento\Framework\ObjectManagerInterface;
 use ReflectionClass;
+use ReflectionIntersectionType;
 use ReflectionNamedType;
+use ReflectionUnionType;
 
 /**
  * Simplistic implementation of Object Manager for testing
@@ -15,28 +17,28 @@ final class ObjectManager implements ObjectManagerInterface
     /**
      * List of objects instantiated by ObjectManager via get
      *
-     * @var object[]
+     * @var array<class-string, object>
      */
     private array $instances = [];
 
     /**
      * Factories for specific types
      *
-     * @var callable[]
+     * @var array<class-string, callable(ObjectManager, array<string, mixed>):object>
      */
     private array $factories = [];
 
     /**
      * List of default arguments for an object creation
      *
-     * @var array[]
+     * @var array<class-string, array<string, mixed>>
      */
     private array $defaultArguments = [];
 
     /**
      * Marks classes that should be autowired instead of created with no default constructor
      *
-     * @var array<string, bool>
+     * @var array<class-string, bool>
      */
     private array $autowiredClasses = [];
 
@@ -44,7 +46,7 @@ final class ObjectManager implements ObjectManagerInterface
      * Marks object argument to be auto-resolved
      * from another object reference in container
      *
-     * @var array<string,array<string,string>>
+     * @var array<class-string, array<string,class-string>>
      */
     private array $autoResolvedArguments = [];
 
@@ -58,6 +60,12 @@ final class ObjectManager implements ObjectManagerInterface
 
     /**
      * Creates a new version of requested object type with passed arguments
+     *
+     * @param class-string<T> $type
+     * @param array<string,mixed> $arguments
+     *
+     * @template T of object
+     * @return   T
      */
     public function create($type, array $arguments = [])
     {
@@ -66,10 +74,16 @@ final class ObjectManager implements ObjectManagerInterface
 
     /**
      * Returns shared default version of the object
+     *
+     * @param class-string<T> $type
+     *
+     * @return   T
+     * @template T of object
      */
-    public function get($type)
+    public function get($type): object
     {
         if ($type === ObjectManagerInterface::class) {
+            // @phpstan-ignore-next-line
             return $this;
         }
 
@@ -77,9 +91,15 @@ final class ObjectManager implements ObjectManagerInterface
             $this->instances[$type] = $this->createObject($type);
         }
 
+        // @phpstan-ignore-next-line
         return $this->instances[$type];
     }
 
+    /**
+     * Stub for configure
+     *
+     * @param array<string, mixed> $configuration
+     */
     public function configure(array $configuration)
     {
         throw new LogicException('Fake ObjectManager does not support native configure, use with other method for configuring it');
@@ -87,6 +107,11 @@ final class ObjectManager implements ObjectManagerInterface
 
     /**
      * Adds an object to internal registries
+     *
+     * @param class-string<T> $type
+     * @param T $instance
+     *
+     * @template T of object
      */
     public function withObject(string $type, object $instance): self
     {
@@ -98,7 +123,10 @@ final class ObjectManager implements ObjectManagerInterface
     /**
      * Adds a factory for a specific type an object manager
      *
-     * @param callable(ObjectManager, array<string,mixed>): object  $factory
+     * @param callable(ObjectManager, array<string,mixed>): T $factory
+     * @param class-string<T> $type
+     *
+     * @template T of object
      */
     public function withFactory(string $type, callable $factory): self
     {
@@ -109,6 +137,11 @@ final class ObjectManager implements ObjectManagerInterface
 
     /**
      * Adds a factory for a specific type an object manager
+     *
+     * @param class-string<T> $type
+     * @param array<string, mixed> $arguments
+     *
+     * @template T of object
      */
     public function withDefaultArguments(string $type, array $arguments): self
     {
@@ -119,6 +152,12 @@ final class ObjectManager implements ObjectManagerInterface
 
     /**
      * Adds a auto-resolver for specific argument
+     *
+     * @param class-string<T> $type
+     * @param class-string<R> $reference
+     *
+     * @template T of object
+     * @template R of object
      */
     public function withAutoResolvedArgument(string $type, string $name, string $reference): self
     {
@@ -129,36 +168,64 @@ final class ObjectManager implements ObjectManagerInterface
 
     /**
      * Creates an instance of an object
+     *
+     * @param class-string<T> $type
+     * @param null|array<string,mixed> $arguments
+     *
+     * @return   T
+     * @template T of object
      */
     private function createObject(string $type, ?array $arguments = null): object
     {
         if (isset($this->factories[$type])) {
+            // @phpstan-ignore-next-line
             return $this->factories[$type]($this, ($arguments ?? []) + ($this->defaultArguments[$type] ?? []));
         }
 
         return $this->createWithReflection($type, $arguments);
     }
 
-    public function withAutowire(string $class): self
+    /**
+     * Marks object as autowired
+     *
+     * @param class-string<T> $type
+     *
+     * @template T of object
+     */
+    public function withAutowire(string $type): self
     {
         $object = clone $this;
-        $object->autowiredClasses[$class] = true;
+        $object->autowiredClasses[$type] = true;
         return $object;
     }
 
     /**
      * Used to create objects with autowired dependencies
      *
-     * @deprecated since 2.1.0, will be removed in 3.0.0
+     * @param class-string<T> $type
+     * @param null|array<string,mixed> $arguments
      *
-     * @use self::withAutowire for make sure object is autowired on get calls
-     * @use self::create for creating objects manually
+     * @return     T
+     * @template   T of object
+     * @deprecated 2.1.0 will be removed in 3.0.0
+     *
+     * @see self::withAutowire for make sure object is autowired on get calls
+     * @see self::create for creating objects manually
      */
     public function createAutowiredObject(string $type, ?array $arguments = null): object
     {
         return $this->createWithReflection($type, $arguments);
     }
 
+    /**
+     * Used to create objects with autowired dependencies
+     *
+     * @param class-string<T> $type
+     * @param null|array<string,mixed> $arguments
+     *
+     * @return   T
+     * @template T of object
+     */
     private function createWithReflection(string $type, ?array $arguments = null): object
     {
         $class = new ReflectionClass($type);
@@ -195,7 +262,17 @@ final class ObjectManager implements ObjectManagerInterface
             }
 
             if ($parameterType = $parameter->getType()) {
-                if ($parameterType->isBuiltin() || !$parameterType instanceof ReflectionNamedType) {
+                if ($parameterType instanceof ReflectionIntersectionType || $parameterType instanceof ReflectionUnionType) {
+                    throw new \InvalidArgumentException(
+                        sprintf(
+                            'Argument $%s of intersection or union cannot be resolved for %s',
+                            $parameter->getName(),
+                            $class->getName()
+                        )
+                    );
+                }
+
+                if (!$parameterType instanceof ReflectionNamedType || $parameterType->isBuiltin()) {
                     throw new \InvalidArgumentException(
                         sprintf(
                             'Argument $%s is required for instantiating %s object but it is impossible to resolve it',
@@ -205,6 +282,7 @@ final class ObjectManager implements ObjectManagerInterface
                     );
                 }
 
+                // @phpstan-ignore-next-line
                 $constructorArgs[] = $this->get($parameterType->getName());
             }
         }
