@@ -165,7 +165,7 @@ final class ObjectManager implements ObjectManagerInterface
 
         $constructor = $class->getConstructor();
 
-        if ($arguments === null && isset($this->autowiredClasses[$type])) {
+        if ($arguments === null && !empty($this->autowiredClasses[$type])) {
             $arguments = []; // Autowire arguments for object
         }
 
