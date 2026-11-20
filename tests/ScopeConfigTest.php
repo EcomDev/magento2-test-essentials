@@ -13,6 +13,7 @@ use EcomDev\Magento2TestEssentials\Store\Store;
 use EcomDev\Magento2TestEssentials\Store\StoreManager;
 use EcomDev\Magento2TestEssentials\Store\Website;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ScopeInterface as AppScope;
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -120,6 +121,61 @@ class ScopeConfigTest extends TestCase
                 'path_two' => 'base_website_value'
             ],
             $config->getValue('some/other', ScopeInterface::SCOPE_STORE, 'english')
+        );
+    }
+
+    #[Test]
+    public function resolvesScopeIntoStringCode()
+    {
+        $config = ScopeConfig::new()
+            ->withStoreManager(
+                StoreManager::new()
+                    ->withWebsite(
+                        Website::new(1, 'base')
+                    )
+                    ->withStore(
+                        Store::new(1, 'default')
+                            ->withWebsite(1, 1)
+                    )
+                    ->withStore(
+                        Store::new(2, 'english')
+                            ->withWebsite(1, 1)
+                    )
+            )
+            ->withWebsiteValue('base', 'some/other/path_two', 'base_website_value')
+        ;
+        $this->assertEquals(
+            'base_website_value',
+            $config->getValue(
+                'some/other/path_two',
+                ScopeInterface::SCOPE_STORE,
+                new class implements AppScope {
+                    public function getScopeId()
+                    {
+                    }
+
+                    public function getCode()
+                    {
+                        return 'english';
+                    }
+
+                    public function getId()
+                    {
+                    }
+
+                    public function getScopeType()
+                    {
+                    }
+
+                    public function getScopeTypeName()
+                    {
+                    }
+
+                    public function getName()
+                    {
+                    }
+                }
+            )
         );
     }
 

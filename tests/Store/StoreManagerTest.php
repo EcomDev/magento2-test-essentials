@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace EcomDev\Magento2TestEssentials\Store;
 
+use Magento\Framework\App\ScopeInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -84,6 +85,19 @@ class StoreManagerTest extends TestCase
                 ->withWebsite(Website::new(3, 'three'))
                 ->withWebsite(Website::new(5, 'five'))
                 ->getWebsite('two')
+        );
+    }
+
+    #[Test]
+    public function returnsWebsiteByScope()
+    {
+        $this->assertEquals(
+            Website::new(2, 'two'),
+            StoreManager::new()
+                ->withWebsite(Website::new(2, 'two'))
+                ->withWebsite(Website::new(3, 'three'))
+                ->withWebsite(Website::new(5, 'five'))
+                ->getWebsite(Website::new(2, 'two'))
         );
     }
 
@@ -175,7 +189,7 @@ class StoreManagerTest extends TestCase
     }
 
     #[Test]
-    public function returnsCurrentlySetStoreView()
+    public function returnsStoreByScope()
     {
         $this->assertEquals(
             Store::new(2, 'two'),
@@ -183,37 +197,56 @@ class StoreManagerTest extends TestCase
                 ->withStore(Store::new(2, 'two'))
                 ->withStore(Store::new(4, 'four'))
                 ->withStore(Store::new(6, 'six'))
-                ->setCurrentStore(2)
-                ->getStore()
+                ->getStore(Store::new(2, 'two'))
+        );
+    }
+
+    #[Test]
+    public function returnsCurrentlySetStoreView()
+    {
+        $storeManager = StoreManager::new()
+            ->withStore(Store::new(2, 'two'))
+            ->withStore(Store::new(4, 'four'))
+            ->withStore(Store::new(6, 'six'));
+
+        $storeManager->setCurrentStore(2);
+
+        $this->assertEquals(
+            Store::new(2, 'two'),
+            $storeManager->getStore()
         );
     }
 
     #[Test]
     public function currentStoreViewAffectsCurrentWebsite()
     {
+        $storeManager = StoreManager::new()
+            ->withWebsite(Website::new(2, 'website_two'))
+            ->withStore(Store::new(2, 'two')->withWebsite(2, 0))
+            ->withStore(Store::new(4, 'four')->withWebsite(2, 0))
+            ->withStore(Store::new(6, 'six'));
+
+        $storeManager->setCurrentStore(4);
+
         $this->assertEquals(
             Website::new(2, 'website_two'),
-            StoreManager::new()
-                ->withWebsite(Website::new(2, 'website_two'))
-                ->withStore(Store::new(2, 'two')->withWebsite(2, 0))
-                ->withStore(Store::new(4, 'four')->withWebsite(2, 0))
-                ->withStore(Store::new(6, 'six'))
-                ->setCurrentStore(4)
-                ->getWebsite()
+            $storeManager->getWebsite()
         );
     }
 
     #[Test]
     public function currentStoreViewCanBeSetFromStoreCode()
     {
+        $storeManager = StoreManager::new()
+            ->withStore(Store::new(2, 'two'))
+            ->withStore(Store::new(4, 'four'))
+            ->withStore(Store::new(6, 'six'));
+
+        $storeManager->setCurrentStore("six");
+
         $this->assertEquals(
             Store::new(6, "six"),
-            StoreManager::new()
-                ->withStore(Store::new(2, 'two'))
-                ->withStore(Store::new(4, 'four'))
-                ->withStore(Store::new(6, 'six'))
-                ->setCurrentStore("six")
-                ->getStore()
+            $storeManager->getStore()
         );
     }
 
@@ -272,13 +305,13 @@ class StoreManagerTest extends TestCase
     public function errorsOutCurrentStoreCannotBeFound()
     {
         $this->expectException(NoSuchEntityException::class);
-        $this->expectExceptionMessage("The store that was requested wasn't found. Verify the store and try again.");
+        $this->expectExceptionMessageIsOrContains("The store that was requested wasn't found. Verify the store and try again.");
 
-        StoreManager::new()
+        $storeManager = StoreManager::new()
             ->withStore(Store::new(1, 'one'))
-            ->withStore(Store::new(2, 'two'))
-            ->setCurrentStore(null)
-            ->getStore();
+            ->withStore(Store::new(2, 'two'));
+        $storeManager->setCurrentStore(null);
+        $storeManager->getStore();
     }
 
     #[Test]
@@ -324,6 +357,19 @@ class StoreManagerTest extends TestCase
     }
 
     #[Test]
+    public function returnsGroupByScope()
+    {
+        $this->assertEquals(
+            StoreGroup::new(3, 'three'),
+            StoreManager::new()
+                ->withGroup(StoreGroup::new(1, 'one'))
+                ->withGroup(StoreGroup::new(3, 'three'))
+                ->withGroup(StoreGroup::new(5, 'five'))
+                ->getGroup(StoreGroup::new(3, 'three'))
+        );
+    }
+
+    #[Test]
     public function defaultsToAdminStore()
     {
         $defaultStore = StoreManager::new()
@@ -365,8 +411,9 @@ class StoreManagerTest extends TestCase
             ->withGroup(StoreGroup::new(2, 'two')->withDefaultStore(2))
             ->withStore(Store::new(1, 'one'))
             ->withStore(Store::new(2, 'two')->withWebsite(2, 2))
-            ->withDefaultWebsite(1)
-            ->setCurrentStore(2);
+            ->withDefaultWebsite(1);
+
+        $storeManager->setCurrentStore(2);
 
         $this->assertEquals(
             StoreGroup::new(2, 'two')->withDefaultStore(2),
@@ -396,7 +443,7 @@ class StoreManagerTest extends TestCase
     public function websiteErrorsOutWhenDefaultWebsiteDoesNotExists()
     {
         $this->expectException(NoSuchEntityException::class);
-        $this->expectExceptionMessage("The website that was requested wasn't found. Verify the website and try again.");
+        $this->expectExceptionMessageIsOrContains("The website that was requested wasn't found. Verify the website and try again.");
 
         $storeManager = StoreManager::new()
             ->withWebsite(Website::new(1, 'one'))
@@ -424,7 +471,7 @@ class StoreManagerTest extends TestCase
     public function storeGroupErrorsOutWhenDefaultGroupDoesNotExists()
     {
         $this->expectException(NoSuchEntityException::class);
-        $this->expectExceptionMessage(
+        $this->expectExceptionMessageIsOrContains(
             "The store group that was requested wasn't found. Verify the store group and try again."
         );
 
@@ -524,5 +571,38 @@ class StoreManagerTest extends TestCase
         $storesManager->setIsSingleStoreModeAllowed(false);
 
         $this->assertFalse($storesManager->isSingleStoreMode());
+    }
+
+    private function scope(int $id, string $code): ScopeInterface
+    {
+        return new class ($id, $code) implements ScopeInterface {
+            public function __construct(
+                private int $id,
+                private string $code
+            ) {
+            }
+
+            public function getCode()
+            {
+                return $this->code;
+            }
+
+            public function getId()
+            {
+                return $this->id;
+            }
+
+            public function getScopeType()
+            {
+            }
+
+            public function getScopeTypeName()
+            {
+            }
+
+            public function getName()
+            {
+            }
+        };
     }
 }

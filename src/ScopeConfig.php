@@ -5,6 +5,7 @@ namespace EcomDev\Magento2TestEssentials;
 use EcomDev\Magento2TestEssentials\Store\StoreManager;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\App\ScopeInterface as AppScope;
 
 /**
  * Fake implementation of scoped config
@@ -93,15 +94,22 @@ final class ScopeConfig implements ScopeConfigInterface
     public function getValue($path, $scopeType = ScopeConfigInterface::SCOPE_TYPE_DEFAULT, $scopeCode = null): mixed
     {
         $scopeType = $this->unifyScope($scopeType);
+        if ($scopeCode instanceof AppScope) {
+            $scopeCode = $scopeCode->getCode();
+        }
+
+        $scopeCode = (string)$scopeCode;
 
         $scope = match ($scopeType) {
             ScopeInterface::SCOPE_WEBSITES => sprintf(
                 '%s/%s',
-                ScopeInterface::SCOPE_WEBSITES, $scopeCode
+                ScopeInterface::SCOPE_WEBSITES,
+                $scopeCode
             ),
-            ScopeInterface::SCOPE_STORES  => sprintf(
+            ScopeInterface::SCOPE_STORES => sprintf(
                 '%s/%s',
-                ScopeInterface::SCOPE_STORES, $scopeCode
+                ScopeInterface::SCOPE_STORES,
+                $scopeCode
             ),
             default => ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
         };

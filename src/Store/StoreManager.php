@@ -2,7 +2,11 @@
 
 namespace EcomDev\Magento2TestEssentials\Store;
 
+use Magento\Framework\App\ScopeInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Store\Api\Data\GroupInterface;
+use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
@@ -40,6 +44,8 @@ final class StoreManager implements StoreManagerInterface
 
     /**
      * Current store
+     *
+     * @phpstan-ignore property.unusedType
      */
     private ?int $currentStore = 0;
 
@@ -100,6 +106,10 @@ final class StoreManager implements StoreManagerInterface
             return $this->getDefaultStoreView();
         }
 
+        if ($storeId instanceof StoreInterface) {
+            $storeId = (int)$storeId->getId();
+        }
+
         if ($storeId !== null && isset($this->stores[$storeId])) {
             return $this->stores[$storeId];
         }
@@ -145,6 +155,10 @@ final class StoreManager implements StoreManagerInterface
 
         if ($websiteId === true) {
             $websiteId = $this->defaultWebsite;
+        }
+
+        if ($websiteId instanceof WebsiteInterface) {
+            $websiteId = (int)$websiteId->getId();
         }
 
         if (isset($this->websites[$websiteId])) {
@@ -195,6 +209,7 @@ final class StoreManager implements StoreManagerInterface
     public function getDefaultStoreView(): Store
     {
         $website = $this->getWebsite($this->defaultWebsite);
+        // @phpstan-ignore-next-line
         $group = $this->getGroup($website->getDefaultGroupId());
         return $this->getStore($group->getDefaultStoreId());
     }
@@ -208,8 +223,13 @@ final class StoreManager implements StoreManagerInterface
             $groupId = $this->getStore()->getStoreGroupId();
         }
 
+        // @phpstan-ignore-next-line
         if ($groupId === true) {
             $groupId = $this->getWebsite(true)->getDefaultGroupId();
+        }
+
+        if ($groupId instanceof GroupInterface) {
+            $groupId = (int)$groupId->getId();
         }
 
         if (!isset($this->groups[$groupId])) {
@@ -241,14 +261,14 @@ final class StoreManager implements StoreManagerInterface
     /* @inheritDoc */
     public function setCurrentStore($store)
     {
-        if ($store !== null) {
-            $store = $this->getStore($store);
-            $this->currentStore = $store->getId();
-            return $this;
+        // @phpstan-ignore-next-line
+        if ($store === null) {
+            $this->currentStore = $store;
+            return;
         }
 
-        $this->currentStore = $store;
-        return $this;
+        $store = $this->getStore($store);
+        $this->currentStore = $store->getId();
     }
 
     /**
