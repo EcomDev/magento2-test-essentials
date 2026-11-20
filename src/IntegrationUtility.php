@@ -29,6 +29,8 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\Setup\Declaration\Schema\Dto\Factories\Table;
 use Magento\Framework\Setup\Declaration\Schema\Sharding;
+use Psr\Log\LoggerInterface as PsrLoggerInterface;
+use Psr\Log\NullLogger;
 
 final class IntegrationUtility
 {
@@ -55,6 +57,7 @@ final class IntegrationUtility
                     ->create(ConnectionFactory::class, $arguments)
             )
             ->withObject(LoggerInterface::class, new Quiet())
+            ->withObject(PsrLoggerInterface::class, new NullLogger())
             ->withObject(SerializerInterface::class, new Json())
             ->withFactory(SelectRenderer::class, static fn ($objectManager) => new SelectRenderer([
                 'distinct' => [
