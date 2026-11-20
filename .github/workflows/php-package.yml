@@ -4,8 +4,8 @@ on:
   pull_request:
   workflow_call:
 jobs:
-  format-check:
-    name: Check PSR12 Standarts
+  static-check:
+    name: Check static
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -16,7 +16,7 @@ jobs:
           tools: composer:v2
       - run: composer install
         shell: bash
-      - run: composer format:check
+      - run: composer static
         shell: bash
   tests:
     name: Run Tests

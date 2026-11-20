@@ -14,7 +14,7 @@ jobs:
     uses: ./.github/workflows/php-package.yml
   release-please:
     needs: verify-release
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v4
         with:
