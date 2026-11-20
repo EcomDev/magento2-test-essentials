@@ -34,6 +34,21 @@ final class ObjectManager implements ObjectManagerInterface
     private array $defaultArguments = [];
 
     /**
+     * Marks classes that should be autowired instead of created with no default constructor
+     *
+     * @var array<string, bool>
+     */
+    private array $autowiredClasses = [];
+
+    /**
+     * Marks object argument to be auto-resolved
+     * from another object reference in container
+     *
+     * @var array<string,array<string,string>>
+     */
+    private array $autoResolvedArguments = [];
+
+    /**
      * Creates a new instance of ObjectManager
      */
     public static function new(): self
@@ -82,6 +97,8 @@ final class ObjectManager implements ObjectManagerInterface
 
     /**
      * Adds a factory for a specific type an object manager
+     *
+     * @param callable(ObjectManager, array<string,mixed>): object  $factory
      */
     public function withFactory(string $type, callable $factory): self
     {
@@ -101,22 +118,56 @@ final class ObjectManager implements ObjectManagerInterface
     }
 
     /**
+     * Adds a auto-resolver for specific argument
+     */
+    public function withAutoResolvedArgument(string $type, string $name, string $reference): self
+    {
+        $objectManager = clone $this;
+        $objectManager->autoResolvedArguments[$type][$name] = $reference;
+        return $objectManager;
+    }
+
+    /**
      * Creates an instance of an object
      */
     private function createObject(string $type, ?array $arguments = null): object
     {
         if (isset($this->factories[$type])) {
-            return $this->factories[$type]($this, $arguments ?? []);
+            return $this->factories[$type]($this, ($arguments ?? []) + ($this->defaultArguments[$type] ?? []));
         }
 
-        return $this->createAutowiredObject($type, $arguments);
+        return $this->createWithReflection($type, $arguments);
     }
 
+    public function withAutowire(string $class): self
+    {
+        $object = clone $this;
+        $object->autowiredClasses[$class] = true;
+        return $object;
+    }
+
+    /**
+     * Used to create objects with autowired dependencies
+     *
+     * @deprecated since 2.1.0, will be removed in 3.0.0
+     *
+     * @use self::withAutowire for make sure object is autowired on get calls
+     * @use self::create for creating objects manually
+     */
     public function createAutowiredObject(string $type, ?array $arguments = null): object
+    {
+        return $this->createWithReflection($type, $arguments);
+    }
+
+    private function createWithReflection(string $type, ?array $arguments = null): object
     {
         $class = new ReflectionClass($type);
 
         $constructor = $class->getConstructor();
+
+        if ($arguments === null && isset($this->autowiredClasses[$type])) {
+            $arguments = []; // Autowire arguments for object
+        }
 
         if ($arguments === null || $constructor === null) {
             return $class->newInstanceWithoutConstructor();
@@ -131,13 +182,20 @@ final class ObjectManager implements ObjectManagerInterface
                 continue;
             }
 
+            if (isset($this->autoResolvedArguments[$type][$parameter->getName()])) {
+                $constructorArgs[] = $this->get(
+                    $this->autoResolvedArguments[$type][$parameter->getName()]
+                );
+                continue;
+            }
+
             if ($parameter->isDefaultValueAvailable()) {
                 $constructorArgs[] = $parameter->getDefaultValue();
                 continue;
             }
 
-            if ($type = $parameter->getType()) {
-                if ($type->isBuiltin() || !$type instanceof ReflectionNamedType) {
+            if ($parameterType = $parameter->getType()) {
+                if ($parameterType->isBuiltin() || !$parameterType instanceof ReflectionNamedType) {
                     throw new \InvalidArgumentException(
                         sprintf(
                             'Argument $%s is required for instantiating %s object but it is impossible to resolve it',
@@ -147,7 +205,7 @@ final class ObjectManager implements ObjectManagerInterface
                     );
                 }
 
-                $constructorArgs[] = $this->get($type->getName());
+                $constructorArgs[] = $this->get($parameterType->getName());
             }
         }
 

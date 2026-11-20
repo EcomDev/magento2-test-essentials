@@ -20,28 +20,21 @@ namespace EcomDev\Magento2TestEssentials {
 
     }
 
-    class DependencyWithStringArgument
+    readonly class DependencyWithStringArgument
     {
-        private $someString;
 
-        public function __construct(string $someString)
+        public function __construct(private string $someString)
         {
-
-            $this->someString = $someString;
         }
     }
 
-    class ObjectWithDependencyOneAndTwo
+    readonly class ObjectWithDependencyOneAndTwo
     {
-        private $dependencyOne;
-        private $dependencyTwo;
-        private $someText;
-
-        public function __construct(DependencyOne $dependencyOne, DependencyTwo $dependencyTwo, string $someText = '')
-        {
-            $this->dependencyOne = $dependencyOne;
-            $this->dependencyTwo = $dependencyTwo;
-            $this->someText = $someText;
+        public function __construct(
+            private DependencyOne $dependencyOne,
+            private DependencyTwo $dependencyTwo,
+            private string $someText = ''
+        ) {
         }
 
         public function assertSame(ObjectWithDependencyOneAndTwo $other): void
@@ -51,7 +44,17 @@ namespace EcomDev\Magento2TestEssentials {
             Assert::assertSame($this->someText, $other->someText);
         }
     }
+
+    readonly class ObjectWithOptionalDependencyTwo
+    {
+        public function __construct(
+            private DependencyOne $dependencyOne,
+            private ?DependencyTwo $dependencyTwo = null
+        ) {
+        }
+    }
 }
+
 
 namespace Magento\Store\Api\Data {
     interface StoreExtensionInterface {

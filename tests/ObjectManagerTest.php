@@ -127,18 +127,42 @@ class ObjectManagerTest extends TestCase
         $objectManager = ObjectManager::new()
             ->withFactory(
                 ObjectWithDependencyOneAndTwo::class,
-                function (ObjectManagerInterface $objectManager, array $arguments) {
-                    return new ObjectWithDependencyOneAndTwo(
-                        $objectManager->get(DependencyOne::class),
-                        $objectManager->get(DependencyTwo::class),
-                        $arguments['someText'] ?? 'factoryText'
-                    );
-                }
+                fn (ObjectManagerInterface $objectManager, array $arguments) => new ObjectWithDependencyOneAndTwo(
+                    $objectManager->get(DependencyOne::class),
+                    $objectManager->get(DependencyTwo::class),
+                    $arguments['someText'] ?? 'factoryText'
+                )
             );
 
         $this->assertEquals(
             [
                 new ObjectWithDependencyOneAndTwo(new DependencyOne(), new DependencyTwo(), 'factoryText'),
+                new ObjectWithDependencyOneAndTwo(new DependencyOne(), new DependencyTwo(), 'my_custom_text'),
+            ],
+            [
+                $objectManager->create(ObjectWithDependencyOneAndTwo::class),
+                $objectManager->create(ObjectWithDependencyOneAndTwo::class, ['someText' => 'my_custom_text'])
+            ]
+        );
+    }
+
+    #[Test]
+    public function passesDefaultArgumentsToFactoryMethod()
+    {
+        $objectManager = ObjectManager::new()
+            ->withDefaultArguments(ObjectWithDependencyOneAndTwo::class, ['someText' => 'defaultText'])
+            ->withFactory(
+                ObjectWithDependencyOneAndTwo::class,
+                fn (ObjectManagerInterface $objectManager, array $arguments) => new ObjectWithDependencyOneAndTwo(
+                    $objectManager->get(DependencyOne::class),
+                    $objectManager->get(DependencyTwo::class),
+                    $arguments['someText'] ?? 'factoryText'
+                )
+            );
+
+        $this->assertEquals(
+            [
+                new ObjectWithDependencyOneAndTwo(new DependencyOne(), new DependencyTwo(), 'defaultText'),
                 new ObjectWithDependencyOneAndTwo(new DependencyOne(), new DependencyTwo(), 'my_custom_text'),
             ],
             [
@@ -187,9 +211,42 @@ class ObjectManagerTest extends TestCase
     public function creationOfObjectWithScalarArgumentFailsWhenNoValueProvided()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Argument \$someString is required");
+        $this->expectExceptionMessageIsOrContains("Argument \$someString is required");
 
         $objectManager = ObjectManager::new();
         $objectManager->create(DependencyWithStringArgument::class);
+    }
+
+    #[Test]
+    public function allowsAutowiringOfArguments()
+    {
+        $objectManager = ObjectManager::new()
+            ->withAutowire(ObjectWithDependencyOneAndTwo::class)
+            ->withDefaultArguments(ObjectWithDependencyOneAndTwo::class, [
+                'someText' => 'defaultText',
+            ]);
+
+        $this->assertEquals(
+            new ObjectWithDependencyOneAndTwo(new DependencyOne(), new DependencyTwo(), 'defaultText'),
+            $objectManager->get(ObjectWithDependencyOneAndTwo::class)
+        );
+    }
+
+    #[Test]
+    public function allowsAutoResolvedParameters()
+    {
+        $dependencyTwo = new class extends DependencyTwo
+        {
+        };
+
+        $objectManager = ObjectManager::new()
+            ->withAutowire(ObjectWithOptionalDependencyTwo::class)
+            ->withObject(DependencyTwo::class, $dependencyTwo)
+            ->withAutoResolvedArgument(ObjectWithOptionalDependencyTwo::class, 'dependencyTwo', DependencyTwo::class);
+
+        $this->assertEquals(
+            new ObjectWithOptionalDependencyTwo(new DependencyOne(), $dependencyTwo),
+            $objectManager->get(ObjectWithOptionalDependencyTwo::class)
+        );
     }
 }
