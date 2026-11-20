@@ -249,4 +249,15 @@ class ObjectManagerTest extends TestCase
             $objectManager->get(ObjectWithOptionalDependencyTwo::class)
         );
     }
+
+    #[Test]
+    public function createAutoWiredObject()
+    {
+        $dependency = ObjectManager::new()->createAutowiredObject(ObjectWithDependencyOneAndTwo::class, []);
+
+        $this->assertEquals(
+            new ObjectWithDependencyOneAndTwo(new DependencyOne(), new DependencyTwo()),
+            $dependency
+        );
+    }
 }
