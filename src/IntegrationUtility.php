@@ -7,6 +7,7 @@ use Magento\Framework\App\ResourceConnection\ConfigInterface;
 use Magento\Framework\App\ResourceConnection\ConnectionAdapterInterface;
 use Magento\Framework\DB\Adapter\Pdo\MysqlFactory;
 use Magento\Framework\DB\Adapter\Pdo\Mysql as PdoMysql;
+use Magento\Framework\DB\Adapter\SqlVersionProvider;
 use Magento\Framework\DB\Logger\Quiet;
 use Magento\Framework\DB\LoggerInterface;
 use Magento\Framework\DB\Select\ColumnsRenderer;
@@ -27,6 +28,7 @@ use Magento\Framework\Model\ResourceModel\Type\Db\Pdo\Mysql;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\Setup\Declaration\Schema\Dto\Factories\Table;
+use Magento\Framework\Setup\Declaration\Schema\Sharding;
 
 final class IntegrationUtility
 {
@@ -38,19 +40,19 @@ final class IntegrationUtility
         return $objectManager
             ->withObject(\Magento\Framework\App\DeploymentConfig::class, $deploymentConfig)
             ->withObject(DeploymentConfig::class, $deploymentConfig)
+            ->withDefaultArguments(Sharding::class, ['resources' => ['default']])
+            ->withAutowire(Sharding::class)
+            ->withAutowire(ConnectionFactory::class)
+            ->withAutowire(SqlVersionProvider::class)
+            ->withAutowire(Table::class)
+            ->withAutowire(PdoMysql::class)
+            ->withAutoResolvedArgument(PdoMysql::class, 'dtoFactoriesTable', Table::class)
+            ->withAutoResolvedArgument(PdoMysql::class, 'serializer', SerializerInterface::class)
+            ->withAutoResolvedArgument(PdoMysql::class, 'logger', LoggerInterface::class)
             ->withFactory(
                 ConnectionFactoryInterface::class,
-                static fn ($objectManager) => new ConnectionFactory($objectManager)
-            )
-            ->withFactory(
-                PdoMysql::class,
-                static fn ($objectManager, $arguments) => $objectManager->createAutowiredObject(
-                    PdoMysql::class,
-                    $arguments + [
-                        'serializer' => new Json(),
-                        'dtoFactoriesTable' => $objectManager->get(Table::class)
-                    ]
-                )
+                static fn ($objectManager, $arguments) => $objectManager
+                    ->create(ConnectionFactory::class, $arguments)
             )
             ->withObject(LoggerInterface::class, new Quiet())
             ->withObject(SerializerInterface::class, new Json())
@@ -106,34 +108,35 @@ final class IntegrationUtility
                     'part' => 'forupdate'
                 ]
             ]))
-            ->withFactory(
-                SelectFactory::class,
-                static fn ($objectManager, array $arguments) => new SelectFactory(
-                    $objectManager->get(SelectRenderer::class),
-                    $arguments['parts'] ?? []
-                )
-            )
+            ->withAutowire(SelectFactory::class)
+            ->withAutowire(MysqlFactory::class)
             ->withFactory(
                 ConnectionAdapterInterface::class,
-                static fn ($objectManager, $arguments) => new Mysql($arguments['config'] ?? [], $objectManager->create(MysqlFactory::class))
+                static fn ($objectManager, $arguments) => $objectManager->create(Mysql::class, $arguments)
             )
+            ->withAutoResolvedArgument(Mysql::class, 'mysqlFactory', MysqlFactory::class)
             ->withFactory(
                 ConfigInterface::class,
                 static fn (ObjectManager $objectManager) => $objectManager
                     ->create(ResourceConnectionConfig::class)
             )
-            ->withFactory(
-                ResourceConnection::class,
-                static fn (ObjectManager $objectManager) => new ResourceConnection(
-                    $objectManager->get(ConfigInterface::class),
-                    $objectManager->get(ConnectionFactoryInterface::class),
-                    $objectManager->get(DeploymentConfig::class)
-                )
-            );
+            ->withAutowire(ResourceConnection::class);
     }
 
     public static function setupDatabaseObjects(DeploymentConfig $deploymentConfig): ObjectManager
     {
         return self::withSetupDatabaseObjects(ObjectManager::new(), $deploymentConfig);
+    }
+
+    /**
+     * Configure sharding for database connections
+     *
+     * @param string[] $resources
+     */
+    public static function configureSharding(ObjectManager $objectManager, array $resources = []): ObjectManager
+    {
+        return $objectManager->withDefaultArguments(Sharding::class, [
+            'resources' => ['default', ...$resources]
+        ]);
     }
 }

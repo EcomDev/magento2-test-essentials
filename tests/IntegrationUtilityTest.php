@@ -5,6 +5,7 @@ namespace EcomDev\Magento2TestEssentials;
 use EcomDev\TestContainers\MagentoData\DbConnectionSettings;
 use EcomDev\TestContainers\MagentoData\DbContainerBuilder;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Setup\Declaration\Schema\Sharding;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -72,6 +73,39 @@ class IntegrationUtilityTest extends TestCase
 
         $this->assertSame($defaultConnection, $anotherConnection);
         $this->assertNotSame($defaultConnection, $indexerConnection);
+    }
+
+    #[Test]
+    public function allowsSpecifyingCustomSharding()
+    {
+        $connection = $this->connectionSettings();
+
+        $objectManager = IntegrationUtility::configureSharding(
+            IntegrationUtility::setupDatabaseObjects(
+                DeploymentConfig::new()
+                    ->withDatabaseConnection(
+                        $connection->host,
+                        $connection->user,
+                        $connection->password,
+                        $connection->database
+                    )
+                    ->withDatabaseConnection(
+                        $connection->host,
+                        $connection->user,
+                        $connection->password,
+                        $connection->database,
+                        'quote'
+                    )
+            ),
+            ['quote', 'sales']
+        );
+
+        $sharding = $objectManager->get(Sharding::class);
+
+        $this->assertSame(
+            ['default', 'quote'],
+            $sharding->getResources()
+        );
     }
 
     private function connectionSettings(): DbConnectionSettings
