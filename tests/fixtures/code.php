@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright © EcomDev B.V. All rights reserved.
  * See LICENSE for license details.
@@ -12,17 +13,14 @@ namespace EcomDev\Magento2TestEssentials {
 
     class DependencyOne
     {
-
     }
 
     class DependencyTwo
     {
-
     }
 
     readonly class DependencyWithStringArgument
     {
-
         public function __construct(private string $someString)
         {
         }
@@ -55,17 +53,16 @@ namespace EcomDev\Magento2TestEssentials {
     }
 }
 
-
 namespace Magento\Store\Api\Data {
-    interface StoreExtensionInterface {
-
+    interface StoreExtensionInterface
+    {
     }
 
-    interface GroupExtensionInterface {
-
+    interface GroupExtensionInterface
+    {
     }
 
-    interface WebsiteExtensionInterface {
-
+    interface WebsiteExtensionInterface
+    {
     }
 }

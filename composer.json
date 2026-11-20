@@ -41,7 +41,7 @@
   },
   "autoload-dev": {
     "files": [
-      "tests/fixtures.php"
+      "tests/fixtures/code.php"
     ],
     "psr-4": {
       "EcomDev\\Magento2TestEssentials\\": "tests"
