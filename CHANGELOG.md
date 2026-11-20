@@ -1,5 +1,29 @@
 # Changelog
 
+## [2.1.0](https://github.com/EcomDev/magento2-test-essentials/compare/v2.0.0...v2.1.0) (2026-11-20)
+
+
+### Features
+
+* Autowiring and Autoresolving in ObjectManager ([c169389](https://github.com/EcomDev/magento2-test-essentials/commit/c169389d2bdd481881860c87994578dc5c7589c5))
+* Database integration moved to autowiring ([cb228a1](https://github.com/EcomDev/magento2-test-essentials/commit/cb228a122a07e00a6e7adb24d5751aa561de8c76))
+* DatabaseUtility for setup or verify table data ([7701239](https://github.com/EcomDev/magento2-test-essentials/commit/7701239f4f9367457f1271408dd0afc17dcb0c3f))
+* ModuleUtility helper for file paths ([bead026](https://github.com/EcomDev/magento2-test-essentials/commit/bead0264c14c5bc800dd5cfb8794decfd4344505))
+* support for scope object in StoreManager and ScopeConfig ([41c1124](https://github.com/EcomDev/magento2-test-essentials/commit/41c1124fa654f070a92504ba6001dc58c067b6e4))
+
+
+### Bug Fixes
+
+* autowiring check in ObjectManager ([73fb55a](https://github.com/EcomDev/magento2-test-essentials/commit/73fb55a0d165d5e166e83fd1c9c6bef69c0ccc1e))
+
+
+### Miscellaneous Chores
+
+* add phpstan to build process ([2df2623](https://github.com/EcomDev/magento2-test-essentials/commit/2df2623ed6df1a112894413566ff05238f8b839d))
+* increase coverage for depracated method ([ca9c863](https://github.com/EcomDev/magento2-test-essentials/commit/ca9c863cdd8daff8a6797cd3b276fd19e66db0cc))
+* move fixtures.php into folder ([041e112](https://github.com/EcomDev/magento2-test-essentials/commit/041e1127931f20d31a5c71d75352bc34339f4d32))
+* update workflows to use new tools ([87f8145](https://github.com/EcomDev/magento2-test-essentials/commit/87f8145d5853fdadfc381120a5755d4a7297b335))
+
 ## [2.0.0](https://github.com/EcomDev/magento2-test-essentials/compare/v1.0.0...v2.0.0) (2026-11-19)
 
 

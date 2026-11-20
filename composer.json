@@ -52,7 +52,10 @@
     "test": "XDEBUG_MODE=coverage paratest --fail-on-all-issues --display-deprecations --coverage-text",
     "static:phpstan": "phpstan analyze -c phpstan.neon",
     "static:phpcs": "phpcs",
-    "static": ["@static:phpstan", "@static:phpcs"],
+    "static": [
+      "@static:phpstan",
+      "@static:phpcs"
+    ],
     "format": "phpcbf"
   },
   "config": {
